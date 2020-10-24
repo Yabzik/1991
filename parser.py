@@ -1,5 +1,15 @@
 import xlrd
 import json
+import os
+import requests
+
+TIMETABLE_BASE = {
+    'epf': 'http://elf.mdu.in.ua/ROZKLAD/d/',
+}
+
+TIMETABLE_SPECS = {
+    'epf': ['ekologija-d.xls', 'kb-d.xls', 'mb-d.xls', 'mek-d.xls', 'mo-d.xls', 'mp-d.xls', 'pravo-d.xls', 'pua-d.xls', 'sa-d.xls', 'tr-d.xls', 'ufeb-d.xls'],
+}
 
 class Parser:
     def __init__(self, path):
@@ -41,6 +51,31 @@ class Parser:
     def save(self, path):
         with open(path, 'w', encoding='utf-8') as file:
             file.write(json.dumps(self.result, indent=4, ensure_ascii=False))
-            
 
-Parser('timetable/epf/kb-d.xls').save('parsed_timetable/epf/kb-d.json')
+def poll():
+    for faculty, base in TIMETABLE_BASE.items():
+        for file in TIMETABLE_SPECS[faculty]:
+            remote_file = requests.get(base + file).content
+            file_title = file.split('.')[0]
+            local_path_parsed = f'parsed_timetable/{faculty}/{file_title}.json'
+            local_path_raw = f'timetable/{faculty}/{file}'
+
+            if not os.path.exists(local_path_parsed):
+                with open(local_path_raw, 'wb') as f:
+                    f.write(remote_file)
+                Parser(local_path_raw).save(local_path_parsed)
+                print(f'Файл {file} был обработан!')
+            else:
+                local_file = None
+                with open(local_path_raw, 'rb') as f:
+                    local_file = f.read()
+                if local_file != remote_file:
+                    print(f'Файл {file} изменился!')
+                    with open(local_path_raw, 'wb') as f:
+                        f.write(remote_file)
+                    Parser(local_path_raw).save(local_path_parsed)
+
+from apscheduler.schedulers.background import BackgroundScheduler
+scheduler = BackgroundScheduler()
+scheduler.add_job(poll, 'interval', minutes=2)
+scheduler.start()
