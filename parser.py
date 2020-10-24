@@ -1,19 +1,12 @@
-# import pandas as pd
-
-# class Parser:
-#     def __init__(self, path):
-#         self.raw_data = pd.read_excel(path)
-#         print(self.raw_data.to_string())
-
 import xlrd
+import json
 
 class Parser:
     def __init__(self, path):
         self.book = xlrd.open_workbook(path)
-        result = {}
+        self.result = {}
         for sheet in range(self.book.nsheets):
-            result.update(self.process_sheet(self.book.sheet_by_index(sheet)))
-        print(result)
+            self.result.update(self.process_sheet(self.book.sheet_by_index(sheet)))
     
     def process_sheet(self, sheet):
         result = {}
@@ -45,6 +38,9 @@ class Parser:
 
         return result
 
+    def save(self, path):
+        with open(path, 'w', encoding='utf-8') as file:
+            file.write(json.dumps(self.result, indent=4, ensure_ascii=False))
             
 
-Parser('timetable/epf/kb-d.xls')
+Parser('timetable/epf/kb-d.xls').save('parsed_timetable/epf/kb-d.json')
