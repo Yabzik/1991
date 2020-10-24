@@ -10,7 +10,7 @@ def read_students_file():
 
 def read_timetable_file(code_of_group):
     '''Функция для полученя базы расписаний'''
-    with open(f"../parser_timetable/{code_of_group}-d.json", "r", encoding="utf-8") as f_read:
+    with open(f"../parsed_timetable/epf/{code_of_group}-d.json", "r", encoding="utf-8") as f_read:
         text = json.load(f_read)
     return text
 
