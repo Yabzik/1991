@@ -1,0 +1,15 @@
+{
+	"list_of_students" : [
+		{ 
+			"telegram_id" : "message.chat.id",
+			"student_name" : "message.chat.first_name",
+			"student_family_name" : "message.chat.last_name",
+			"name_of_faculty" : "name_str",
+			"year_of_study" : "year_int",
+			"student_group" : "group_str",
+			"num_of_request" : "num_int"
+		}
+	]
+}
+
+
