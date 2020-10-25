@@ -3,7 +3,7 @@ from telebot import types
 import time
 import datetime
 import urllib.request, json 
-import json_work_new
+#import json_work_new
 
 bot = telebot.TeleBot("1047628795:AAHR8i8R8Nri4nVmcAyOZTackPe3jvnPk3c")
 faculty = ''
@@ -15,11 +15,12 @@ curriculum = ''
 user_id = ''
 groups= ''
 stud_list= ''
+id_list= ''
 
 @bot.message_handler(commands=['subject'])
 def handle_text(message):
     user_id = str(message.from_user.id)   
-    status= json_work_new.get_user_status(user_id) #получение ID пользователя
+    #status= json_work_new.get_user_status(user_id) #получение ID пользователя
     status= 'Учитель 👨‍🏫👩‍'
     user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
     if status == 'student' :
@@ -74,7 +75,8 @@ def send_daily_notifications(message):
         times=times[2:]
         times=str(int(times)-int(course)+1)
         print(times)
-        groups=json_work_new.get_list_of_group(faculty, times)    #Получение Спсика групп
+        #groups=json_work_new.get_list_of_group(faculty, times)    #Получение Спсика групп
+        #bot.send_message(message.from_user.id, groups)
         
 @bot.message_handler(func=lambda mess: 'Напишите одно или несколько названий групп', content_types=['text'])
 def handle_text(message):
@@ -84,16 +86,30 @@ def handle_text(message):
         groups=message.text
         result = [x.strip(' ') for x in groups.split(',')]
         for i in result:
-           stud_list = json_work_new.get_group_list_id(i)
-    
+            #stud_list = json_work_new.get_group_list(i) #получение списка студентов
+            #bot.send_message(message.from_user.id, stud_list.text, reply_markup=user_markup1) 
+            #id_list = json_work_new.get_group_list_id(i)
+            
+        user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
+        user_markup1.row('Отправить сообщения студентам')
+        id_list= ["hello","heljlo"]
+        bot.send_message(message.from_user.id, 'Введите сообщение', reply_markup=user_markup1) 
+       # for j in id_list:
+                #teacher_initials = json_work_new.get_teacher_name_and_father_name(message.from_user.id)
+        #    teacher_initials = "hello" + message.text
+         #   bot.send_message(message.from_user.id, teacher_initials)
+         
+            
+@bot.message_handler(func=lambda mess: 'Напишите одно или несколько названий групп', content_types=['text'])
+def handle_text(message):
 
 @bot.message_handler(func=lambda mess: '1 Понедельник' == mess.text or '2 Вторник' == mess.text or '3 Среда' == mess.text or '4 Четверг' == mess.text or '5 Пятница' == mess.text or '6 Суббота' == mess.text or '7 Воскресенье' == mess.text, content_types=['text'])
 def handle_text(message):
     day= message.text
     day= day[0]    
     user_id = str(message.from_user.id)  
-    curriculum = json_work_new.get_timetable(id, day[0]) #получение расписания
-    
+    #curriculum = json_work_new.get_timetable(id, day[0]) #получение расписания
+
 #@bot.message_handler(func=lambda mess: 'Расписание на сегодня' == mess.text or 'Расписание на завтра' == mess.text or 'Расписание на неделю' == mess.text, content_types=['text'])    
 #def handle_text(message):
  #   if message.text=='Расписание на сегодня':
@@ -120,6 +136,5 @@ def handle_text(message):
 #@bot.message_handler(func=lambda mess: '15 минут' == mess.text '30 минут' == mess.text '45 минут' == mess.text '60 минут' == mess.text, content_types=['text'])
 #def handle_text(message):
  #   notif=
-  #  bot.send_message(message.from_user.id, 'Выберите предмет:', reply_markup=user_markup1)
+  #  bot.send_message(message.from_user.id, 'Выберите предмет:', reply_markup=user_markup1)'''
 bot.polling()
-input()
