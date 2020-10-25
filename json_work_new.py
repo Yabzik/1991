@@ -190,7 +190,8 @@ def get_group_list(student_group):
     for student_telegram_id in list_of_students.keys():
         student_info = list_of_students[student_telegram_id]
         if student_info["student_group"] == student_group:
-            list_of_students_in_group_str += f"\n{num_of_student}. {student_info['student_name']} {student_info['sutdent_family_name']}"
+            list_of_students_in_group_str += f"\n{num_of_student}. {student_info['student_name']} {student_info['student_family_name']}"
+            num_of_student += 1
             if student_info["status"] == "Староста 🤠":
                 list_of_students_in_group_str += " - 🤠"
     

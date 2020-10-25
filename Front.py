@@ -63,7 +63,7 @@ def send_daily_notifications(message):
     course= course[0]
     print(course)
     if status == 'Учитель 👨‍🏫👩‍🏫' :
-        if course  and path and times :
+        if course  and faculty:
             pass
         else:
             user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
@@ -84,7 +84,7 @@ def send_daily_notifications(message):
 def handle_text(message):
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
     if status == 'Учитель 👨‍🏫👩‍🏫' :
-        if course  and path :
+        if course  and faculty :
             pass
         else:
             groups=message.text
