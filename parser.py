@@ -4,7 +4,8 @@ import os
 import requests
 
 TIMETABLE_BASE = {
-    'epf': 'http://elf.mdu.in.ua/ROZKLAD/d/',
+    # 'epf': 'http://elf.mdu.in.ua/ROZKLAD/d/',
+    'epf': 'https://yabzik.online/epf/', # testing
 }
 
 TIMETABLE_SPECS = {
@@ -52,6 +53,24 @@ class Parser:
         with open(path, 'w', encoding='utf-8') as file:
             file.write(json.dumps(self.result, indent=4, ensure_ascii=False))
 
+def on_change(file):
+    faculty_code = file.split('/')[-1].split('.')[0]
+    old_data = None
+    new_data = None
+    with open(file, encoding='utf-8') as f:
+        new_data = json.load(f)
+    with open(f'{file}.old', encoding='utf-8') as f:
+        old_data = json.load(f)
+
+    for date, date_timetable in new_data.items():
+        if date not in old_data:
+            print('Появилось расписание на день:', date, faculty_code)
+        else:
+            if new_data[date] != old_data[date]:
+                for course, course_timetable in date_timetable.items():
+                    if new_data[date][course] != old_data[date][course]:
+                        print('Изменилось расписание на день:', date, faculty_code, course, new_data[date][course])
+
 def poll():
     for faculty, base in TIMETABLE_BASE.items():
         for file in TIMETABLE_SPECS[faculty]:
@@ -73,7 +92,10 @@ def poll():
                     print(f'Файл {file} изменился!')
                     with open(local_path_raw, 'wb') as f:
                         f.write(remote_file)
+                    os.rename(local_path_parsed, f'{local_path_parsed}.old')
                     Parser(local_path_raw).save(local_path_parsed)
+                    on_change(local_path_parsed)
+                    os.remove(f'{local_path_parsed}.old')
 
 from apscheduler.schedulers.background import BackgroundScheduler
 scheduler = BackgroundScheduler()
