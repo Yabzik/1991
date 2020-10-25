@@ -3,11 +3,13 @@ import json
 import os
 import requests
 
+# основы директорий для получения расписания
 TIMETABLE_BASE = {
     # 'epf': 'http://elf.mdu.in.ua/ROZKLAD/d/',
     'epf': 'https://yabzik.online/epf/', # testing
 }
 
+# файлы расписания в директории факультета
 TIMETABLE_SPECS = {
     'epf': ['ekologija-d.xls', 'kb-d.xls', 'mb-d.xls', 'mek-d.xls', 'mo-d.xls', 'mp-d.xls', 'pravo-d.xls', 'pua-d.xls', 'sa-d.xls', 'tr-d.xls', 'ufeb-d.xls'],
 }
@@ -20,13 +22,16 @@ class Parser:
             self.result.update(self.process_sheet(self.book.sheet_by_index(sheet)))
     
     def process_sheet(self, sheet):
+        # обработка одного листа
         result = {}
 
+        # получение индексов столбцов с группами
         group_columns = {}
         for i in range(len(sheet.row_values(7))):
             if isinstance(sheet.row_values(7)[i], float):
                 group_columns[int(str(sheet.row_values(7)[i])[:1])] = i
 
+        # получение начальных индексов строк с днями
         day_rows = {}
         col_0 = sheet.col_values(0)
         for i in range(len(col_0)):
@@ -39,6 +44,7 @@ class Parser:
                 else:
                     day_rows[day_title] = i
 
+        # получение расписания для каждой группы и каждого дня
         for group, group_col in group_columns.items():
             for day_title, day_row in day_rows.items():
                 day = sheet.col_values(group_col)[day_row:day_row+8]
