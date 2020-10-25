@@ -30,6 +30,21 @@ import datetime as dt
 
 #telegram_id - STRING!!!!
 
+def get_list_of_group(name_of_faculty, year_of_study): #year_of_study - STRING!!!
+    '''Функция для получения списка груп определенного факультета и курса'''
+    data = read_group_data()
+
+    return data[name_of_faculty][year_of_study]
+
+
+def read_group_data():
+    '''Функция для получения базы названий груп'''
+    with open("json_group_data.json", "r", encoding="utf-8") as f_read:
+        data = json.load(f_read)
+
+    return data
+
+
 def get_user_status(telegram_id):
     ''' Функция для проверки статуса пользователя'''
     data = read_data_file()
