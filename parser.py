@@ -3,10 +3,13 @@ import json
 import os
 import requests
 
+# основы директорий для получения расписания
 TIMETABLE_BASE = {
-    'epf': 'http://elf.mdu.in.ua/ROZKLAD/d/',
+    # 'epf': 'http://elf.mdu.in.ua/ROZKLAD/d/',
+    'epf': 'https://yabzik.online/epf/', # testing
 }
 
+# файлы расписания в директории факультета
 TIMETABLE_SPECS = {
     'epf': ['ekologija-d.xls', 'kb-d.xls', 'mb-d.xls', 'mek-d.xls', 'mo-d.xls', 'mp-d.xls', 'pravo-d.xls', 'pua-d.xls', 'sa-d.xls', 'tr-d.xls', 'ufeb-d.xls'],
 }
@@ -19,13 +22,16 @@ class Parser:
             self.result.update(self.process_sheet(self.book.sheet_by_index(sheet)))
     
     def process_sheet(self, sheet):
+        # обработка одного листа
         result = {}
 
+        # получение индексов столбцов с группами
         group_columns = {}
         for i in range(len(sheet.row_values(7))):
             if isinstance(sheet.row_values(7)[i], float):
                 group_columns[int(str(sheet.row_values(7)[i])[:1])] = i
 
+        # получение начальных индексов строк с днями
         day_rows = {}
         col_0 = sheet.col_values(0)
         for i in range(len(col_0)):
@@ -38,6 +44,7 @@ class Parser:
                 else:
                     day_rows[day_title] = i
 
+        # получение расписания для каждой группы и каждого дня
         for group, group_col in group_columns.items():
             for day_title, day_row in day_rows.items():
                 day = sheet.col_values(group_col)[day_row:day_row+8]
@@ -51,6 +58,24 @@ class Parser:
     def save(self, path):
         with open(path, 'w', encoding='utf-8') as file:
             file.write(json.dumps(self.result, indent=4, ensure_ascii=False))
+
+def on_change(file):
+    faculty_code = file.split('/')[-1].split('.')[0]
+    old_data = None
+    new_data = None
+    with open(file, encoding='utf-8') as f:
+        new_data = json.load(f)
+    with open(f'{file}.old', encoding='utf-8') as f:
+        old_data = json.load(f)
+
+    for date, date_timetable in new_data.items():
+        if date not in old_data:
+            print('Появилось расписание на день:', date, faculty_code)
+        else:
+            if new_data[date] != old_data[date]:
+                for course, course_timetable in date_timetable.items():
+                    if new_data[date][course] != old_data[date][course]:
+                        print('Изменилось расписание на день:', date, faculty_code, course, new_data[date][course])
 
 def poll():
     for faculty, base in TIMETABLE_BASE.items():
@@ -73,7 +98,10 @@ def poll():
                     print(f'Файл {file} изменился!')
                     with open(local_path_raw, 'wb') as f:
                         f.write(remote_file)
+                    os.rename(local_path_parsed, f'{local_path_parsed}.old')
                     Parser(local_path_raw).save(local_path_parsed)
+                    on_change(local_path_parsed)
+                    os.remove(f'{local_path_parsed}.old')
 
 from apscheduler.schedulers.background import BackgroundScheduler
 scheduler = BackgroundScheduler()
