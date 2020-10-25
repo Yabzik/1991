@@ -5,6 +5,8 @@ import datetime as dt
 ''' 
     Доступные функции:
     
+    get_list_of_group()
+    read_group_data()
     get_user_status()
     get_student_status()
     get_group_list_id()
@@ -29,6 +31,12 @@ import datetime as dt
 '''
 
 #telegram_id - STRING!!!!
+
+def get_teacher_name_and_father_name(telegram_id):
+    '''Функция для получения имя и отчество преподавателя'''
+    teacher_info = read_data_file()["list_of_teachers"][telegram_id]
+
+    return f"{teacher_info["teacher_name"]} {teacher_info["teacher_father_name"]}"
 
 def get_list_of_group(name_of_faculty, year_of_study): #year_of_study - STRING!!!
     '''Функция для получения списка груп определенного факультета и курса'''
@@ -101,7 +109,7 @@ def update_last_user_command_s(telegram_id, command):
     file_work["list_of_students"][telegram_id]["last_user_command"] = command
 
     with open("json_work_file.json", "w", encoding="utf-8") as f_write:
-            json.dump(file_work, f_write)
+            json.dump(file_work, f_write, ensure_ascii=False)
     
     return
 
@@ -112,7 +120,7 @@ def update_last_bot_msg_s(telegram_id, msg):
     file_work["list_of_students"][telegram_id]["last_bot_msg"] = msg
 
     with open("json_work_file.json", "w", encoding="utf-8") as f_write:
-            json.dump(file_work, f_write)
+            json.dump(file_work, f_write, ensure_ascii=False)
     
     return
 
@@ -137,7 +145,7 @@ def update_last_user_command_t(telegram_id, command):
     file_work["list_of_teachers"][telegram_id]["last_user_command"] = command
 
     with open("json_work_file.json", "w", encoding="utf-8") as f_write:
-            json.dump(file_work, f_write)
+            json.dump(file_work, f_write, ensure_ascii=False)
     
     return
 
@@ -148,7 +156,7 @@ def update_last_bot_msg_t(telegram_id, msg):
     file_work["list_of_teachers"][telegram_id]["last_bot_msg"] = msg
 
     with open("json_work_file.json", "w", encoding="utf-8") as f_write:
-            json.dump(file_work, f_write)
+            json.dump(file_work, f_write, ensure_ascii=False)
     
     return
 
@@ -219,7 +227,7 @@ def add_new_student(dict_of_param, telegram_id):
         list_of_students = read_data_file()
         list_of_students["list_of_students"].append(dict_of_param)
         with open("json_work_file.json", "w", encoding="utf-8") as f_write:
-            json.dump(f_dict, f_write)
+            json.dump(f_dict, f_write, ensure_ascii=False)
     
     return result["status_msg"]
 
@@ -241,7 +249,7 @@ def add_new_teacher(dict_of_param, telegram_id):
         list_of_students = read_data_file()
         list_of_students["list_of_students"].append(dict_of_param)
         with open("json_work_file.json", "w", encoding="utf-8") as f_write:
-            json.dump(f_dict, f_write)
+            json.dump(f_dict, f_write, ensure_ascii=False)
     
     return result["status_msg"]
 
