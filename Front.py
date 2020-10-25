@@ -116,7 +116,7 @@ def handle_text(message):
         starosta_info=json_work_new.get_student_group(str(message.from_user.id))
         bot.send_message(message.from_user.id, 'Введите сообщение вашей группе') 
         
- @bot.message_handler(func=lambda mess: 'Введите сообщение вашей группе', content_types=['text'])
+@bot.message_handler(func=lambda mess: 'Введите сообщение вашей группе', content_types=['text'])
 def handle_text(message):
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
     if status == 'Староста 🤠'
