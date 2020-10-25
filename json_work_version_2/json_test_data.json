@@ -1,0 +1,66 @@
+{
+	"list_of_students" : {
+		"message.chat.id" : { 
+			"student_name" : "message.chat.first_name",
+			"student_family_name" : "message.chat.last_name",
+			"name_of_faculty" : "name_str",
+			"year_of_study" : "year_int",
+			"student_group" : "group_str",
+			"status" : "status_str",
+			"code_of_group": "code_of_group_str",
+			"num_of_request" : "num_int",
+			"rank" : "rank_str",
+			"last_user_command" : "last_user_command_str",
+			"last_bot_msg" : "last_bot_msg_str"
+		},
+		"125785581" : {
+			"student_name": "Владислав", 
+			"student_family_name": "Ониценко", 
+			"name_of_faculty": "Экономичкский", 
+			"year_of_study": "2", 
+			"student_group": "ЕК-19",
+			"status" : "Студент 🤓", 
+			"code_of_group": "economic", 
+			"num_of_request": 0,
+			"rank" : "Обычный студент",
+			"last_user_command" : "",
+			"last_bot_msg" : ""
+		},
+		"525412551" : {
+			"student_name": "Кристина", 
+			"student_family_name": "Бойко", 
+			"name_of_faculty": "Филологический", 
+			"year_of_study": "1", 
+			"student_group": "ПК-19",
+			"status" : "Староста 🤓", 
+			"code_of_group": "economic", 
+			"num_of_request": 0,
+			"rank" : "Обычный студент",
+			"last_user_command" : "",
+			"last_bot_msg" : ""
+		}
+	},
+	"list_of_teachers" : {
+		"message.chat.id" : {
+			"teacher_name" : "message.chat.first_name",
+			"teacher_family_name" : "message.chat.last_name",
+			"teacher_father_name" : "teacher_father_name_str",
+			"last_user_command" : "last_user_command_str",
+			"last_bot_msg" : "last_bot_msg_str"
+		},
+		"856957895" : {
+			"teacher_name" : "Дмитрий",
+			"teacher_family_name" : "Сергиенко",
+			"teacher_father_name" : "Сергеевич",
+			"last_user_command" : "last_user_command_str",
+			"last_bot_msg" : "last_bot_msg_str"
+		}
+	},
+	"list_of_unregistered_users" : {
+		"message.chat.id" : {
+			"" : ""
+		}
+	}
+}
+
+
