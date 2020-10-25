@@ -103,7 +103,7 @@ def handle_text(message):
         for i in result:
             id_list = json_work_new.get_group_list_id(i)
             for j in id_list:
-                teacher_initials = json_work_new.get_teacher_name_and_father_name(message.from_user.id)
+                teacher_initials = json_work_new.get_teacher_name_and_father_name(str(message.from_user.id))
                 teacher_initials = teacher_initials + message.text
                 bot.send_message(j, teacher_initials)
    
@@ -113,7 +113,7 @@ def handle_text(message):
     if status == 'Староста 🤠':
         pass
     else:
-        starosta_info=json_work_new.get_student_group(message.from_user.id)
+        starosta_info=json_work_new.get_student_group(str(message.from_user.id))
         bot.send_message(message.from_user.id, 'Введите сообщение вашей группе') 
         
  @bot.message_handler(func=lambda mess: 'Введите сообщение вашей группе', content_types=['text'])
