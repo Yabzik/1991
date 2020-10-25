@@ -67,7 +67,7 @@ def read_group_data():
 def get_user_status(telegram_id):
     ''' Функция для проверки статуса пользователя'''
     data = read_data_file()
-    if telegram_id in read_data_file["list_of_students"].keys():
+    if telegram_id in data["list_of_students"].keys():
         return get_student_status(telegram_id)
     else:
         return "Учитель 👨‍🏫👩‍🏫"
@@ -82,7 +82,7 @@ def get_student_status(telegram_id):
 
 def get_group_list_id(student_grop):
     '''Получение списка идентификаторов студентов определенной группы для дальнейшей обработки'''
-    list_of_students = read_data_file["list_of_students"]
+    list_of_students = read_data_file()["list_of_students"]
     list_of_students_id = []
     
     for student_info in list_of_students.values():

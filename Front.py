@@ -91,7 +91,7 @@ def handle_text(message):
             result = [x.strip(' ') for x in groups.split(',')]
             for i in result:
                 stud_list = json_work_new.get_group_list(i) #получение списка студентов
-                bot.send_message(message.from_user.id, stud_list.text) 
+                bot.send_message(message.from_user.id, stud_list) 
                 
             user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
             user_markup1.row('Отправить сообщения студентам')
