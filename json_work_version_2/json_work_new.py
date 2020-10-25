@@ -5,31 +5,62 @@ import datetime as dt
 ''' 
     Доступные функции:
     
+    get_user_status()
+    get_student_status()
+    get_group_list_id()
     get_info_about_student()
-    update_last_user_command()
-    update_last_bot_msg()
-    get_last_user_command()
-    get_last_bot_msg()
+    update_last_user_command_s()
+    update_last_bot_msg_s()
+    get_last_user_command_s()
+    get_last_bot_msg_s()
+    update_last_user_command_t()
+    update_last_bot_msg_t()
+    get_last_user_command_t()
+    get_last_bot_msg_t()
     get_group_list()
-    read_student_file()
+    read_data_file()
     read_timetable_file()
-    check_user()
-    add_new_user()
+    check_student()
+    add_new_student()
+    check_teacher()
+    add_new_teacher()
     get_timetable()
 
 '''
 
+#telegram_id - STRING!!!!
 
-'''def get_group_list_id(student_grop)
-    Получение списка идентификаторов студентов определенной группы для дальнейшей обработки
+def get_user_status(telegram_id):
+    ''' Функция для проверки статуса пользователя'''
+    data = read_data_file()
+    if telegram_id in read_data_file["list_of_students"].keys():
+        return get_student_status(telegram_id)
+    else:
+        return "Учитель 👨‍🏫👩‍🏫"
 
-    return None
-'''
+
+def get_student_status(telegram_id): 
+    '''Функция для получения статуса студента'''
+    stuednt_info = read_data_file()["list_of_students"][telegram_id]
+
+    return student_info["status"]
+
+
+def get_group_list_id(student_grop):
+    '''Получение списка идентификаторов студентов определенной группы для дальнейшей обработки'''
+    list_of_students = read_data_file["list_of_students"]
+    list_of_students_id = []
+    
+    for student_info in list_of_students.values():
+        if student_info["student_group"] == student_group:
+            list_of_students_id.append(int(student_info["telegram_id"]))
+    
+    return list_of_students_id
 
 
 def get_info_about_student(telegram_id):
     '''Функция для получения информации о студенте'''
-    list_of_students = read()["list_of_students"]
+    list_of_students = read_data_file()["list_of_students"]
     los = list_of_students["telegram_id"]
     
     info = f'''\tИнформация о студенте:
@@ -44,9 +75,9 @@ def get_info_about_student(telegram_id):
     return info
 
 
-def update_last_user_command(telegram_id, command):
+def update_last_user_command_s(telegram_id, command):
     '''Функция для обновления последней команды, которую вводил пользователь'''
-    file_work = read()
+    file_work = read_data_file()
     file_work["list_of_students"][telegram_id]["last_user_command"] = command
 
     with open("json_work_file.json", "w", encoding="utf-8") as f_write:
@@ -55,9 +86,9 @@ def update_last_user_command(telegram_id, command):
     return
 
 
-def update_last_bot_msg(telegram_id, msg):
+def update_last_bot_msg_s(telegram_id, msg):
     '''Функция для обновления последнего сообщения, которое отправлял бот'''
-    file_work = read()
+    file_work = read_data_file()
     file_work["list_of_students"][telegram_id]["last_bot_msg"] = msg
 
     with open("json_work_file.json", "w", encoding="utf-8") as f_write:
@@ -66,23 +97,59 @@ def update_last_bot_msg(telegram_id, msg):
     return
 
 
-def get_last_user_command(telegram_id):
+def get_last_user_command_s(telegram_id):
     '''Функция для получения последней команды, которую вводил пользователь'''
-    student_info = read()["list_of_students"][telegram_id]
+    student_info = read_data_file()["list_of_students"][telegram_id]
     
     return student_info["last_user_command"]
 
 
-def get_last_bot_msg(telegram_id):
+def get_last_bot_msg_s(telegram_id):
     '''Функция для получения последней последнего сообщения, которое отправлял бот'''
-    student_info = read()["list_of_students"][telegram_id]
+    student_info = read_data_file()["list_of_students"][telegram_id]
+    
+    return student_info["last_bot_msg"]
+
+
+def update_last_user_command_t(telegram_id, command):
+    '''Функция для обновления последней команды, которую вводил пользователь'''
+    file_work = read_data_file()
+    file_work["list_of_teachers"][telegram_id]["last_user_command"] = command
+
+    with open("json_work_file.json", "w", encoding="utf-8") as f_write:
+            json.dump(file_work, f_write)
+    
+    return
+
+
+def update_last_bot_msg_t(telegram_id, msg):
+    '''Функция для обновления последнего сообщения, которое отправлял бот'''
+    file_work = read_data_file()
+    file_work["list_of_teachers"][telegram_id]["last_bot_msg"] = msg
+
+    with open("json_work_file.json", "w", encoding="utf-8") as f_write:
+            json.dump(file_work, f_write)
+    
+    return
+
+
+def get_last_user_command_t(telegram_id):
+    '''Функция для получения последней команды, которую вводил пользователь'''
+    student_info = read_data_file()["list_of_teachers"][telegram_id]
+    
+    return student_info["last_user_command"]
+
+
+def get_last_bot_msg_t(telegram_id):
+    '''Функция для получения последней последнего сообщения, которое отправлял бот'''
+    student_info = read_data_file()["list_of_teachers"][telegram_id]
     
     return student_info["last_bot_msg"]
 
 
 def get_group_list(student_group):
     '''Функция для получения списка студентов определённой группы'''
-    list_of_students = read()["list_of_students"]
+    list_of_students = read_data_file()["list_of_students"]
     list_of_students_in_group_str = ""
     num_of_student = 1
 
@@ -98,9 +165,10 @@ def get_group_list(student_group):
     else:
         list_of_students_in_group_str = f"Пока нет зарегестрированных студентов в нашей системе из группы {student_group} 😐"
 
+    return list_of_students_in_group_str
 
 
-def read_students_file():
+def read_data_file():
     '''Функция для получения базы студентов '''
     with open("json_work_file.json", "r", encoding="utf-8") as f_read:
         text = json.load(f_read)
@@ -114,29 +182,54 @@ def read_timetable_file(code_of_group):
     return text
 
 
-def check_user(telegram_id):
+def check_student(telegram_id):
     '''Фукнция для проерки наличие студента в базе'''
-    list_of_students = read_students_file()["list_of_students"]
+    list_of_students = read_data_file()["list_of_students"]
     if telegram_id in list_of_students:
         return {"status_value" : False, "status_msg" : "Такой студент уже есть😡!", "student_info" : student_info}
     else:
         return {"status_value" : True, "status_msg" : "Отлично😃! Мы вас добавили в базу 🖥!", "student_info" : student_info}
 
 
-def add_new_user(dict_of_param, telegram_id):
+def add_new_student(dict_of_param, telegram_id):
     '''Функция для добавления нового студента, если его нет в базе'''
-    result = check_user(telegram_id)
+    result = check_student(telegram_id)
+    
     if result["staus_value"]:
-        list_of_students = read_students_file()
+        list_of_students = read_data_file()
         list_of_students["list_of_students"].append(dict_of_param)
         with open("json_work_file.json", "w", encoding="utf-8") as f_write:
             json.dump(f_dict, f_write)
+    
+    return result["status_msg"]
+
+
+def check_teacher(telegram_id):
+    '''Функция доя проверки наличия преподавателя в базе'''
+    list_of_students = read_data_file()["list_of_teachers"]
+    if telegram_id in list_of_students:
+        return {"status_value" : False, "status_msg" : "Такой преподаватель уже есть🙁!", "teacher_info" : teacher_info}
+    else:
+        return {"status_value" : True, "status_msg" : "Отлично😃! Мы вас добавили в базу 🖥!", "teacher_info" : teacher_info}
+
+
+def add_new_teacher(dict_of_param, telegram_id):
+    '''Функция для добавления нового преподавателя, если его нет в базе'''
+    result = check_teacher(telegram_id)
+    
+    if result["staus_value"]:
+        list_of_students = read_data_file()
+        list_of_students["list_of_students"].append(dict_of_param)
+        with open("json_work_file.json", "w", encoding="utf-8") as f_write:
+            json.dump(f_dict, f_write)
+    
     return result["status_msg"]
 
 
 def get_timetable(telegram_id, user_weekday):
     '''Фукнция для получения расписания студента в определенный день'''
-    result = check_user(telegram_id)
+    result = check_student(telegram_id)
+    
     if not result["status_value"]:
         '''Определения даты дня, который ввёл пользователь'''
         today_d = dt.datetime.date(dt.datetime.now())

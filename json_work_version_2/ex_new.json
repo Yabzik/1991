@@ -24,7 +24,19 @@
 	},
 	"list_of_unregistered_users" : {
 		"message.chat.id" : {
-			"" : ""
+			"student_name" : "message.chat.first_name",
+			"student_family_name" : "message.chat.last_name",
+			"name_of_faculty" : "name_str",
+			"year_of_study" : "year_int",
+			"student_group" : "group_str",
+			"status" : "status_str",
+			"num_of_request" : "num_int",
+			"rank" : "rank_str",
+			"last_user_command" : "last_user_command_str",
+			"last_bot_msg" : "last_bot_msg_str",
+			"teacher_name" : "message.chat.first_name",
+			"teacher_family_name" : "message.chat.last_name",
+			"teacher_father_name" : "teacher_father_name_str",
 		}
 	}
 }
