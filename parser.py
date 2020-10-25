@@ -11,7 +11,7 @@ TIMETABLE_BASE = {
 
 # файлы расписания в директории факультета
 TIMETABLE_SPECS = {
-    'epf': ['ekologija-d.xls', 'kb-d.xls', 'mb-d.xls', 'mek-d.xls', 'mo-d.xls', 'mp-d.xls', 'pravo-d.xls', 'pua-d.xls', 'sa-d.xls', 'tr-d.xls', 'ufeb-d.xls'],
+    'epf': ['ekologija-d.xls', 'kb-d.xls', 'mb-d.xls', 'mek-d.xls', 'mo-d.xls', 'mp-d.xls', 'pravo-d.xls', 'pua-d.xls', 'sa-d.xls', 'tr-d.xls', 'ufeb-d.xls', 'hackathon-d.xls'],
 }
 
 class Parser:
@@ -56,10 +56,12 @@ class Parser:
         return result
 
     def save(self, path):
+        # сохранение файла расписаня
         with open(path, 'w', encoding='utf-8') as file:
             file.write(json.dumps(self.result, indent=4, ensure_ascii=False))
 
 def on_change(file):
+    # вызывается при изменении файла расписания
     faculty_code = file.split('/')[-1].split('.')[0]
     old_data = None
     new_data = None
@@ -78,6 +80,7 @@ def on_change(file):
                         print('Изменилось расписание на день:', date, faculty_code, course, new_data[date][course])
 
 def poll():
+    # проверка на изменение расписания
     for faculty, base in TIMETABLE_BASE.items():
         for file in TIMETABLE_SPECS[faculty]:
             remote_file = requests.get(base + file).content
@@ -103,6 +106,7 @@ def poll():
                     on_change(local_path_parsed)
                     os.remove(f'{local_path_parsed}.old')
 
+# планировщик для обновления расписания
 from apscheduler.schedulers.background import BackgroundScheduler
 scheduler = BackgroundScheduler()
 scheduler.add_job(poll, 'interval', minutes=2)
