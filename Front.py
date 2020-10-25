@@ -4,8 +4,9 @@ import time
 import datetime
 import urllib.request, json 
 import json_work_new
+import config
 
-bot = telebot.TeleBot("1047628795:AAHR8i8R8Nri4nVmcAyOZTackPe3jvnPk3c")
+bot = telebot.TeleBot(config.token)
 faculty = ''
 course = ''
 times = ''
