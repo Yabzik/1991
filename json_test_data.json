@@ -13,27 +13,27 @@
 			"last_user_command" : "last_user_command_str",
 			"last_bot_msg" : "last_bot_msg_str"
 		},
-		"125785581" : {
-			"student_name": "Владислав", 
+		"215080778" : {
+			"student_name": "Игорь", 
 			"student_family_name": "Ониценко", 
-			"name_of_faculty": "Экономичкский", 
+			"name_of_faculty": "Филология", 
 			"year_of_study": "2", 
-			"student_group": "ЕК-19",
+			"student_group": "ПК-19",
 			"status" : "Студент 🤓", 
-			"code_of_group": "economic", 
+			"code_of_group": "hackathon", 
 			"num_of_request": 0,
 			"rank" : "Обычный студент",
 			"last_user_command" : "",
 			"last_bot_msg" : ""
 		},
-		"525412551" : {
-			"student_name": "Кристина", 
+		"1152989069" : {
+			"student_name": "Богдан", 
 			"student_family_name": "Бойко", 
-			"name_of_faculty": "Филологический", 
-			"year_of_study": "1", 
+			"name_of_faculty": "Филология", 
+			"year_of_study": "2", 
 			"student_group": "ПК-19",
 			"status" : "Староста 🤠", 
-			"code_of_group": "economic", 
+			"code_of_group": "hackathon", 
 			"num_of_request": 0,
 			"rank" : "Обычный студент",
 			"last_user_command" : "",
@@ -48,10 +48,10 @@
 			"last_user_command" : "last_user_command_str",
 			"last_bot_msg" : "last_bot_msg_str"
 		},
-		"856957895" : {
-			"teacher_name" : "Дмитрий",
-			"teacher_family_name" : "Сергиенко",
-			"teacher_father_name" : "Сергеевич",
+		"1254134824" : {
+			"teacher_name" : "Андрей",
+			"teacher_family_name" : "Биленко",
+			"teacher_father_name" : "Павлович",
 			"last_user_command" : "last_user_command_str",
 			"last_bot_msg" : "last_bot_msg_str"
 		}

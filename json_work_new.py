@@ -42,7 +42,7 @@ def get_teacher_name_and_father_name(telegram_id):
     '''Функция для получения имя и отчество преподавателя'''
     teacher_info = read_data_file()["list_of_teachers"][telegram_id]
 
-    return f"{teacher_info["teacher_name"]} {teacher_info["teacher_father_name"]}"
+    return f"{teacher_info['teacher_name']} {teacher_info['teacher_father_name']}"
 
 def get_list_of_group(name_of_faculty, year_of_study): #year_of_study - STRING!!!
     '''Функция для получения списка груп определенного факультета и курса'''
@@ -204,14 +204,14 @@ def get_group_list(student_group):
 
 def read_data_file():
     '''Функция для получения базы студентов '''
-    with open("json_work_file.json", "r", encoding="utf-8") as f_read:
+    with open("json_test_data.json", "r", encoding="utf-8") as f_read:
         text = json.load(f_read)
     return text
 
 
 def read_timetable_file(code_of_group):
     '''Функция для полученя базы расписаний'''
-    with open(f"../parser_timetable/{code_of_group}-d.json", "r", encoding="utf-8") as f_read:
+    with open(f"parser_timetable/{code_of_group}-d.json", "r", encoding="utf-8") as f_read:
         text = json.load(f_read)
     return text
 

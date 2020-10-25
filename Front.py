@@ -119,7 +119,7 @@ def handle_text(message):
 @bot.message_handler(func=lambda mess: 'Введите сообщение вашей группе', content_types=['text'])
 def handle_text(message):
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
-    if status == 'Староста 🤠'
+    if status == 'Староста 🤠':
         pass
     else:
         id_list = json_work_new.get_group_list_id(starosta_info)
@@ -129,7 +129,7 @@ def handle_text(message):
        
 @bot.message_handler(func=lambda mess: '1 Понедельник' == mess.text or '2 Вторник' == mess.text or '3 Среда' == mess.text or '4 Четверг' == mess.text or '5 Пятница' == mess.text or '6 Суббота' == mess.text or '7 Воскресенье' == mess.text, content_types=['text'])
 def handle_text(message):
-    if status == 'Староста 🤠' or status == 'Студент 🤓'
+    if status == 'Староста 🤠' or status == 'Студент 🤓':
         day= message.text
         day= day[0]    
         user_id = str(message.from_user.id)  
