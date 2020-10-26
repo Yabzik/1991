@@ -132,7 +132,13 @@ def handle_text(message):
         user_markup1.row('Филилогия')
         user_markup1.row('Иностранные языки')
         bot.send_message(message.from_user.id, 'Выберите факультет:', reply_markup=user_markup1)
-    else 
+    else:
+        result=json_work_new.get_student_group(user_id)
+        stud_list = json_work_new.get_group_list(result)
+        bot.send_message(message.from_user.id, stud_list) 
+        user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
+        user_markup1.row('Отправить сообщения студентам')
+        bot.send_message(message.from_user.id, 'Выберите действие:', reply_markup=user_markup1)
     
 @bot.message_handler(func=lambda mess: 'ЕПФ' == mess.text or
                      'Исторический' == mess.text or 'Филилогия' == mess.text or
@@ -155,23 +161,15 @@ def send_daily_notifications(message):
     if status == 'Староста 🤠'
         command = json_work_new.get_last_user_command_s(user_id)
     if status == 'Студент 🤓' or status == 'Староста 🤠':
-        if status == 'Староста 🤠' and command !='Получить спиcок студентов':
-            if not course  and faculty:
-                pass
-            else:
-                user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
-                user_markup1.row('1 Понедельник', '2 Вторник')
-                user_markup1.row('3 Среда', '4 Четверг')
-                user_markup1.row('5 Пятница', '6 Суббота')
-                user_markup1.row('7 Воскресенье')
-                bot.send_message(message.from_user.id, 'Выберите день:', reply_markup=user_markup1) 
-        else
-            result=json_work_new.get_student_group(user_id)
-            stud_list = json_work_new.get_group_list(result)
-            bot.send_message(message.from_user.id, stud_list) 
+        if not course  and faculty:
+            pass
+        else:
             user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
-            user_markup1.row('Отправить сообщения студентам')
-            bot.send_message(message.from_user.id, 'Выберите действие:', reply_markup=user_markup1)            
+            user_markup1.row('1 Понедельник', '2 Вторник')
+            user_markup1.row('3 Среда', '4 Четверг')
+            user_markup1.row('5 Пятница', '6 Суббота')
+            user_markup1.row('7 Воскресенье')
+            bot.send_message(message.from_user.id, 'Выберите день:', reply_markup=user_markup1)             
     #elif (status == 'Староста 🤠' and command !='Получить спиcок студентов') or status == 'Учитель 👨‍🏫👩‍🏫':  
     elif status == 'Учитель 👨‍🏫👩‍🏫':
         times = str(datetime.datetime.today().strftime('%Y'))
