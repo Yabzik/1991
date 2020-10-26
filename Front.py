@@ -149,18 +149,20 @@ def send_daily_notifications(message):
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
     course= message.text
     course= course[0]
-    if status != 'Учитель 👨‍🏫👩‍🏫' :
-        if not course  and faculty:
-            print('hello')
-            pass
-        else:
-            user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
-            user_markup1.row('1 Понедельник', '2 Вторник')
-            user_markup1.row('3 Среда', '4 Четверг')
-            user_markup1.row('5 Пятница', '6 Суббота')
-            user_markup1.row('7 Воскресенье')
-            bot.send_message(message.from_user.id, 'Выберите день:', reply_markup=user_markup1) 
-    else :
+    if status == 'Староста 🤠'
+        command = json_work_new.get_last_user_command_s(user_id)
+    if status == 'Студент 🤓' or status == 'Староста 🤠':
+        if status != 'Староста 🤠' and command !='Получить спиcок студентов':
+            if not course  and faculty:
+                pass
+            else:
+                user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
+                user_markup1.row('1 Понедельник', '2 Вторник')
+                user_markup1.row('3 Среда', '4 Четверг')
+                user_markup1.row('5 Пятница', '6 Суббота')
+                user_markup1.row('7 Воскресенье')
+                bot.send_message(message.from_user.id, 'Выберите день:', reply_markup=user_markup1) 
+    elif (status == 'Староста 🤠' and command !='Получить спиcок студентов') or status == 'Учитель 👨‍🏫👩‍🏫':  
         times = str(datetime.datetime.today().strftime('%Y'))
         times=times[2:]
         #course=str(int(times)-int(course)+1)
@@ -169,7 +171,7 @@ def send_daily_notifications(message):
         bot.send_message(message.from_user.id, groups)                       
         bot.send_message(message.from_user.id, 'Напишите одно или несколько названий групп')
             
-@bot.message_handler(func=lambda mess: 'Получить спсиок студентов вашей группы' == mess.text, content_types=['text'])
+'''@bot.message_handler(func=lambda mess: 'Получить спсиок студентов вашей группы' == mess.text, content_types=['text'])
 def handle_text(message):
     user_id = str(message.from_user.id)   
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
@@ -177,9 +179,9 @@ def handle_text(message):
         pass
     else:
         starosta_info=json_work_new.get_student_group(str(message.from_user.id))
-        bot.send_message(message.from_user.id, 'Введите сообщение вашей группе') 
+        bot.send_message(message.from_user.id, 'Введите сообщение вашей группе') '''
         
-@bot.message_handler(func=lambda mess: 'Введите сообщение вашей группе' == mess.text, content_types=['text'])
+'''@bot.message_handler(func=lambda mess: 'Введите сообщение вашей группе' == mess.text, content_types=['text'])
 def handle_text(message):
     user_id = str(message.from_user.id)
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
@@ -189,7 +191,7 @@ def handle_text(message):
         id_list = json_work_new.get_group_list_id(starosta_info)
         for j in id_list:
             starosta_initials = "Староста:" + message.text
-            bot.send_message(j, starosta_initials)
+            bot.send_message(j, starosta_initials)'''
        
 @bot.message_handler(func=lambda mess: '1 Понедельник' == mess.text or '2 Вторник' == mess.text or '3 Среда' == mess.text or '4 Четверг' == mess.text or '5 Пятница' == mess.text or '6 Суббота' == mess.text or '7 Воскресенье' == mess.text, content_types=['text'])
 def handle_text(message):
@@ -210,7 +212,10 @@ def handle_text(message):
 @bot.message_handler(func=lambda mess: 'Отправить сообщения студентам' == mess.text , content_types=['text'])
 def handle_text(message):
         user_id = str(message.from_user.id)
-        json_work_new.update_last_user_command_t(user_id,message.text)
+        if status == 'Учитель 👨‍🏫👩‍🏫' :
+            json_work_new.update_last_user_command_t(user_id,message.text)
+        elif status == 'Староста 🤠' :
+            json_work_new.update_last_user_command_s(user_id,message.text)
         bot.send_message(message.from_user.id, 'Введите сообщение:')
 
 @bot.message_handler(content_types=['text'])
@@ -220,10 +225,12 @@ def handle_text(message):
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
     if status == 'Учитель 👨‍🏫👩‍🏫' :
         command = json_work_new.get_last_user_command_t(user_id)
-    if command=='Получить спиcок студентов' and status == 'Учитель 👨‍🏫👩‍🏫':
+    elif status == 'Староста 🤠':
+        command = json_work_new.get_last_user_command_s(user_id)
+    if command=='Получить спиcок студентов' and (status == 'Учитель 👨‍🏫👩‍🏫' or status == 'Староста 🤠'):
         if course and faculty:
             pass
-        else:
+        elif status == 'Учитель 👨‍🏫👩‍🏫':
             groups=message.text
             result = [x.strip(' ') for x in groups.split(',')]
             groups_list = json_work_new.get_full_group_list()
@@ -232,17 +239,25 @@ def handle_text(message):
                     if i == j:
                         stud_list = json_work_new.get_group_list(i) #получение списка студентов
                         bot.send_message(message.from_user.id, stud_list) 
-                
-            user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
-            user_markup1.row('Отправить сообщения студентам')
-            bot.send_message(message.from_user.id, 'Выберите действие:', reply_markup=user_markup1) 
-    elif command=='Отправить сообщения студентам'and status == 'Учитель 👨‍🏫👩‍🏫':
+        elif status == 'Староста 🤠':
+            result=json_work_new.get_student_group(user_id)
+            stud_list = json_work_new.get_group_list(result)
+            bot.send_message(message.from_user.id, stud_list) 
+            
+        user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
+        user_markup1.row('Отправить сообщения студентам')
+        bot.send_message(message.from_user.id, 'Выберите действие:', reply_markup=user_markup1) 
+    elif (status == 'Учитель 👨‍🏫👩‍🏫' or status == 'Староста 🤠') and command=='Отправить сообщения студентам':
         for i in result:
             id_list = json_work_new.get_group_list_id(i)
             for j in id_list:
-                teacher_initials = json_work_new.get_teacher_name_and_father_name(str(message.from_user.id))
-                teacher_initials = teacher_initials + ': ' + message.text
-                bot.send_message(j, teacher_initials)
+                if status == 'Учитель 👨‍🏫👩‍🏫'
+                    teacher_initials = json_work_new.get_teacher_name_and_father_name(str(message.from_user.id))
+                    teacher_initials = teacher_initials + ': ' + message.text
+                    bot.send_message(j, teacher_initials)
+                else:
+                    starosta_initials = "Староста: " + message.text
+                    bot.send_message(j, starosta_initials)
     else:
         bot.send_message(message.from_user.id, 'не поняв')
      
