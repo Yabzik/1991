@@ -113,7 +113,7 @@ def handle_text(message):
         user_markup.row('Получить расписание')
         user_markup.row('Получить список студентов' , 'Отправить сообщение своим студентам')
     elif status == 'Учитель 👨‍🏫👩‍🏫' :
-        user_markup.row('Получить спиcок студентов')
+        user_markup.row('Получить список студентов')
     bot.send_message(message.from_user.id, 'Выберите пункт меню:', reply_markup=user_markup)
 
 @bot.message_handler(func=lambda mess: 'Отправить сообщение своим студентам' == mess.text , content_types=['text'])
@@ -131,16 +131,11 @@ def handle_text(message):
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
     if status == 'Учитель 👨‍🏫👩‍🏫':
         json_work_new.update_last_user_command_t(user_id, message.text)
+        command = json_work_new.get_last_user_command_t(user_id)
     else:
         json_work_new.update_last_user_command_s(user_id, message.text)
         command = json_work_new.get_last_user_command_s(user_id)
-    pp = "Получить список студентов"
-    for i in range(len(command)):
-        print(command[i] == pp[i])
-    print(command == "Получить список студентов")
-    if status == 'Староста 🤠' and command != pp:
-        print(len(command), len('Получить список студентов'))
-        print(type(command))              
+    if (status == 'Староста 🤠' and command != 'Получить список студентов') or (status == 'Студент 🤓' and command == 'Получить расписание') or (status == 'Учитель 👨‍🏫👩‍🏫' and command == 'Получить список студентов'):           
         user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
         user_markup1.row('ЕПФ')
         user_markup1.row('Исторический')
@@ -252,10 +247,11 @@ def handle_text(message):
     elif status == 'Староста 🤠':
         command = json_work_new.get_last_user_command_s(user_id)
     print(command)
-    if command=='Получить спиcок студентов' and (status == 'Учитель 👨‍🏫👩‍🏫' or status == 'Староста 🤠'):
+    if command=='Получить список студентов' and (status == 'Учитель 👨‍🏫👩‍🏫' or status == 'Староста 🤠'):
         if course and faculty:
             pass
         elif status == 'Учитель 👨‍🏫👩‍🏫':
+            print("something")
             groups=message.text
             result = [x.strip(' ') for x in groups.split(',')]
             groups_list = json_work_new.get_full_group_list()
