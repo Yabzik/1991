@@ -18,7 +18,7 @@ stud_list= ''
 id_list= ''
 starosta_info= ''
 
-@bot.message_handler(commands=['subject'])
+@bot.message_handler(commands=['start'])
 def handle_text(message):
     user_id = str(message.from_user.id)   
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
@@ -71,12 +71,12 @@ def send_daily_notifications(message):
             user_markup1.row('3 Среда', '4 Четверг')
             user_markup1.row('5 Пятница', '6 Суббота')
             user_markup1.row('7 Воскресенье')
-            bot.send_message(message.from_user.id, 'День:', reply_markup=user_markup1) 
+            bot.send_message(message.from_user.id, 'Выберите день:', reply_markup=user_markup1) 
     else :
         bot.send_message(message.from_user.id, 'Напишите одно или несколько названий групп')
         times = str(datetime.datetime.today().strftime('%Y'))
         times=times[2:]
-        times=str(int(times)-int(course)+1)
+        course=str(int(times)-int(course)+1)
         groups=json_work_new.get_list_of_group(faculty, times)    #Получение Спсика групп
         bot.send_message(message.from_user.id, groups)
         
@@ -95,9 +95,9 @@ def handle_text(message):
                 
             user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
             user_markup1.row('Отправить сообщения студентам')
-            bot.send_message(message.from_user.id, 'Введите сообщение', reply_markup=user_markup1) 
+            bot.send_message(message.from_user.id, 'Выберите действие', reply_markup=user_markup1) 
             
-@bot.message_handler(func=lambda mess: 'Введите сообщение', content_types=['text'])
+@bot.message_handler(func=lambda mess: 'Выберите действие', content_types=['text'])
 def handle_text(message):
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
     if status == 'Учитель 👨‍🏫👩‍🏫' :
@@ -130,10 +130,16 @@ def handle_text(message):
        
 @bot.message_handler(func=lambda mess: '1 Понедельник' == mess.text or '2 Вторник' == mess.text or '3 Среда' == mess.text or '4 Четверг' == mess.text or '5 Пятница' == mess.text or '6 Суббота' == mess.text or '7 Воскресенье' == mess.text, content_types=['text'])
 def handle_text(message):
+    user_id = str(message.from_user.id) 
+    status= json_work_new.get_user_status(user_id) #получение ID пользователя
     if status == 'Староста 🤠' or status == 'Студент 🤓':
         day= message.text
-        day= day[0]    
-        user_id = str(message.from_user.id)  
-        curriculum = json_work_new.get_timetable(id, day[0]) #получение расписания
+        day= day[0]     
+        if faculty == '':
+            bot.send_message(message.from_user.id, 'Выберите факультет:')
+        elif times == '':
+            bot.send_message(message.from_user.id, 'Выберите курс:')
+        elif
+            curriculum = json_work_new.get_timetable(user_id, day) #получение расписания
 
 bot.polling()
