@@ -74,14 +74,14 @@ def on_change(file):
         if date not in old_data:
             print('Появилось расписание на день:', date, faculty_code)
             if notify_callback:
-                notify_callback(faculty_code, None)
+                notify_callback(faculty_code.split('-')[0], None, date)
         else:
             if new_data[date] != old_data[date]:
                 for course, course_timetable in date_timetable.items():
                     if new_data[date][course] != old_data[date][course]:
                         print('Изменилось расписание на день:', date, faculty_code, course, new_data[date][course])
                         if notify_callback:
-                            notify_callback(faculty_code, course)
+                            notify_callback(faculty_code.split('-')[0], course, date)
 
 def poll():
     # проверка на изменение расписания
@@ -112,8 +112,7 @@ def poll():
 
 notify_callback = None
 
-# планировщик для обновления расписания
 from apscheduler.schedulers.background import BackgroundScheduler
 scheduler = BackgroundScheduler()
-scheduler.add_job(poll, 'interval', minutes=2)
+scheduler.add_job(poll, 'interval', seconds=15)
 scheduler.start()

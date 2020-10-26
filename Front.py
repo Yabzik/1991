@@ -5,7 +5,7 @@ import datetime
 import urllib.request, json 
 import json_work_new
 import config
-import parser
+import scheduler_parser
 
 bot = telebot.TeleBot(config.token)
 faculty = ''
@@ -144,9 +144,18 @@ def handle_text(message):
             curriculum = json_work_new.get_timetable(user_id, day) #получение расписания
 
 
-def notify(faculty_code, year):
-    if not year:
-        json_work_new.find_students({})
-    
-parser.notify_callback = notify
+def notify(faculty_code, year_of_study, date):
+    # students = {}
+    # if not year_of_study:
+    #     students.update(json_work_new.find_students({'code_of_group': faculty_code}))
+    # else:
+    #     students.update(json_work_new.find_students({'code_of_group': faculty_code, 'year_of_study': year_of_study}))
+
+    # print(students)
+
+    # for telegram_id, data in students.items():
+    #     curriculum = json_work_new.get_timetable(telegram_id, date)
+    #     bot.send_message(telegram_id, f"👀 Изменилось расписание на {date}: {curriculum}")
+
+scheduler_parser.notify_callback = notify
 bot.polling()

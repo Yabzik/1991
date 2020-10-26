@@ -222,9 +222,9 @@ def check_student(telegram_id):
     '''Фукнция для проерки наличие студента в базе'''
     list_of_students = read_data_file()["list_of_students"]
     if telegram_id in list_of_students:
-        return {"status_value" : False, "status_msg" : "Такой студент уже есть😡!", "student_info" : student_info}
+        return {"status_value" : False, "status_msg" : "Такой студент уже есть😡!", "student_info" : list_of_students[telegram_id]}
     else:
-        return {"status_value" : True, "status_msg" : "Отлично😃! Мы вас добавили в базу 🖥!", "student_info" : student_info}
+        return {"status_value" : True, "status_msg" : "Отлично😃! Мы вас добавили в базу 🖥!", "student_info" : list_of_students[telegram_id]}
 
 
 def add_new_student(dict_of_param, telegram_id):
