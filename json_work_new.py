@@ -27,6 +27,7 @@ import datetime as dt
     check_teacher()
     add_new_teacher()
     get_timetable()
+    find_students()
 
 '''
 
@@ -75,7 +76,7 @@ def get_user_status(telegram_id):
 
 def get_student_status(telegram_id): 
     '''Функция для получения статуса студента'''
-    stuednt_info = read_data_file()["list_of_students"][telegram_id]
+    student_info = read_data_file()["list_of_students"][telegram_id]
 
     return student_info["status"]
 
@@ -293,6 +294,15 @@ def get_timetable(telegram_id, user_weekday):
 
     else:
         return result["status_msg"]
+
+def find_students(query):
+    '''Фукнция для получения списка студентов по поисковому запросу'''
+    list_of_students = read_data_file()["list_of_students"]
+    result = {}
+    for telegram_id, student_data in list_of_students.items():
+        if student_data.items() >= query.items():
+            result[telegram_id] = student_data
+    return result
 
 
 '''def write():
