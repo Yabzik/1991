@@ -13,6 +13,20 @@
 			"last_user_command": "last_user_command_str", 
 			"last_bot_msg": "last_bot_msg_str"
 		}, 
+		"661940035": {
+			"student_name": "Кристина", 
+			"student_family_name": "Браилко", 
+			"name_of_faculty": "Филология", 
+			"year_of_study": "2", 
+			"student_group": "ПК-19", 
+			"status": "Староста 🤠", 
+			"code_of_group": "hackathon", 
+			"num_of_request": 0, 
+			"rank": "Обычный студент", 
+			"last_user_command": "", 
+			"last_bot_msg": ""
+
+		},
 		"215080778": {
 			"student_name": "Игорь", 
 			"student_family_name": "Ониценко", 
@@ -45,7 +59,7 @@
 			"name_of_faculty": "Филология", 
 			"year_of_study": "2", 
 			"student_group": "ПК-19", 
-			"status": "Староста 🤠", 
+			"status": "Студент 🤓", 
 			"code_of_group": "hackathon", 
 			"num_of_request": 0, 
 			"rank": "Обычный студент", 

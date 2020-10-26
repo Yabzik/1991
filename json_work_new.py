@@ -35,7 +35,7 @@ import datetime as dt
 
 def get_student_group(telegram_id):
     '''Функция для получения названия группы студента'''
-    student_info = read_data_file()["list_of_student"][telegram_id]
+    student_info = read_data_file()["list_of_students"][telegram_id]
 
     return student_info["student_group"]
 
