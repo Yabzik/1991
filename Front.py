@@ -8,7 +8,7 @@ import config
 import scheduler_parser
 
 bot = telebot.TeleBot(config.token)
-faculty = ''
+faculty = 'Филология'
 course = ''
 times = ''
 notif = ''
@@ -30,12 +30,13 @@ def handle_text(message):
     elif status == 'Староста 🤠' :
         user_markup.row('Получить расписание')
         user_markup.row('Получить спсиок студентов вашей группы')
-    elif status == 'Учитель 👨‍🏫👩‍' :
+    elif status == 'Учитель 👨‍🏫👩‍🏫' :
         user_markup.row('Получить спиcок студентов')
     bot.send_message(message.from_user.id, 'Выберите пункт меню:', reply_markup=user_markup)
     
 @bot.message_handler(func=lambda mess: 'Получить расписание' == mess.text or 'Получить спиcок студентов' == mess.text, content_types=['text'])
 def handle_text(message):
+    user_id = str(message.from_user.id)   
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
     user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
     user_markup1.row('ЕПФ')
@@ -59,11 +60,13 @@ def handle_text(message):
     
 @bot.message_handler(func=lambda mess: '1 курс' == mess.text or '2 курс' == mess.text or '3 курс' == mess.text or '4 курс' == mess.text or '5 курс' == mess.text or '6 курс' == mess.text, content_types=['text'])
 def send_daily_notifications(message):
+    user_id = str(message.from_user.id)   
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
     course= message.text
     course= course[0]
     print(course)
-    if status == 'Учитель 👨‍🏫👩‍🏫' :
+    print(status)
+    if status != 'Учитель 👨‍🏫👩‍🏫' :
         if course  and faculty:
             pass
         else:
@@ -77,12 +80,14 @@ def send_daily_notifications(message):
         bot.send_message(message.from_user.id, 'Напишите одно или несколько названий групп')
         times = str(datetime.datetime.today().strftime('%Y'))
         times=times[2:]
-        course=str(int(times)-int(course)+1)
-        groups=json_work_new.get_list_of_group(faculty, times)    #Получение Спсика групп
+        #course=str(int(times)-int(course)+1)
+        print(faculty, course)
+        groups=json_work_new.get_list_of_group(faculty, str(course))    #Получение Спсика групп
         bot.send_message(message.from_user.id, groups)
         
-@bot.message_handler(func=lambda mess: 'Напишите одно или несколько названий групп', content_types=['text'])
+@bot.message_handler(func=lambda mess: 'Напишите одно или несколько названий групп' == mess.text, content_types=['text'])
 def handle_text(message):
+    user_id = str(message.from_user.id)   
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
     if status == 'Учитель 👨‍🏫👩‍🏫' :
         if course  and faculty :
@@ -98,8 +103,9 @@ def handle_text(message):
             user_markup1.row('Отправить сообщения студентам')
             bot.send_message(message.from_user.id, 'Выберите действие', reply_markup=user_markup1) 
             
-@bot.message_handler(func=lambda mess: 'Выберите действие', content_types=['text'])
+@bot.message_handler(func=lambda mess: 'Выберите действие' == mess.text, content_types=['text'])
 def handle_text(message):
+    user_id = str(message.from_user.id)   
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
     if status == 'Учитель 👨‍🏫👩‍🏫' :
         for i in result:
@@ -109,17 +115,19 @@ def handle_text(message):
                 teacher_initials = teacher_initials + message.text
                 bot.send_message(j, teacher_initials)
    
-@bot.message_handler(func=lambda mess: 'Получить спсиок студентов вашей группы', content_types=['text'])
+@bot.message_handler(func=lambda mess: 'Получить спсиок студентов вашей группы' == mess.text, content_types=['text'])
 def handle_text(message):
+    user_id = str(message.from_user.id)   
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
-    if status == 'Староста 🤠':
+    if status != 'Староста 🤠':
         pass
     else:
         starosta_info=json_work_new.get_student_group(str(message.from_user.id))
         bot.send_message(message.from_user.id, 'Введите сообщение вашей группе') 
         
-@bot.message_handler(func=lambda mess: 'Введите сообщение вашей группе', content_types=['text'])
+@bot.message_handler(func=lambda mess: 'Введите сообщение вашей группе' == mess.text, content_types=['text'])
 def handle_text(message):
+    user_id = str(message.from_user.id)
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
     if status == 'Староста 🤠':
         pass
@@ -131,6 +139,7 @@ def handle_text(message):
        
 @bot.message_handler(func=lambda mess: '1 Понедельник' == mess.text or '2 Вторник' == mess.text or '3 Среда' == mess.text or '4 Четверг' == mess.text or '5 Пятница' == mess.text or '6 Суббота' == mess.text or '7 Воскресенье' == mess.text, content_types=['text'])
 def handle_text(message):
+    print('something')
     user_id = str(message.from_user.id) 
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
     if status == 'Староста 🤠' or status == 'Студент 🤓':
@@ -156,6 +165,7 @@ def notify(faculty_code, year_of_study, date):
     # for telegram_id, data in students.items():
     #     curriculum = json_work_new.get_timetable(telegram_id, date)
     #     bot.send_message(telegram_id, f"👀 Изменилось расписание на {date}: {curriculum}")
+    pass
 
 scheduler_parser.notify_callback = notify
 bot.polling()

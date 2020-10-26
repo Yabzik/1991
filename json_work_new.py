@@ -310,5 +310,6 @@ def find_students(query):
         pass'''
 
 
-'''if __name__ == "__main__": 
-   print(get_timetable("251538190", 3))'''
+if __name__ == "__main__": 
+
+   read_group_data()

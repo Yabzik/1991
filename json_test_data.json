@@ -26,6 +26,19 @@
 			"last_user_command" : "",
 			"last_bot_msg" : ""
 		},
+		"507634108": {
+			"student_name": "Фео", 
+			"student_family_name": "Ониценко", 
+			"name_of_faculty": "Филология", 
+			"year_of_study": "2", 
+			"student_group": "ПК-19",
+			"status" : "Студент 🤓", 
+			"code_of_group": "hackathon", 
+			"num_of_request": 0,
+			"rank" : "Обычный студент",
+			"last_user_command" : "",
+			"last_bot_msg" : ""
+		},
 		"1152989069" : {
 			"student_name": "Богдан", 
 			"student_family_name": "Бойко", 
@@ -62,5 +75,3 @@
 		}
 	}
 }
-
-
