@@ -215,7 +215,7 @@ def handle_text(message):
     global result
     user_id = str(message.from_user.id) 
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
-    if status= 'Учитель 👨‍🏫👩‍🏫' :
+    if status == 'Учитель 👨‍🏫👩‍🏫' :
         command = json_work_new.get_last_user_command_t(user_id)
     if command=='Получить спиcок студентов' and status == 'Учитель 👨‍🏫👩‍🏫':
         if course and faculty:
