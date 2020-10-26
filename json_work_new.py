@@ -305,6 +305,16 @@ def find_students(query):
     return result
 
 
+def get_full_group_list():
+    '''Функция для получения списка всех групп'''
+    data_of_group = read_group_data()
+    full_group_list = []
+    for faculty in data_of_group.keys():
+        for year_of_study in data_of_group[faculty].keys():
+            full_group_list += data_of_group[faculty][year_of_study]
+
+    return full_group_list
+
 '''def write():
     with open("json_work_file.json", "w", encoding="utf-8") as f_write:
         pass'''
