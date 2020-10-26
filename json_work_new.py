@@ -213,7 +213,7 @@ def read_data_file():
 
 def read_timetable_file(code_of_group):
     '''Функция для полученя базы расписаний'''
-    with open(f"parser_timetable/{code_of_group}-d.json", "r", encoding="utf-8") as f_read:
+    with open(f"parsed_timetable/epf/{code_of_group}-d.json", "r", encoding="utf-8") as f_read:
         text = json.load(f_read)
     return text
 
@@ -281,8 +281,8 @@ def get_timetable(telegram_id, user_weekday):
         #user_date_str = "25.09.2020"
         if user_date_str in tt_file.keys():
             for lesson in range(4):
-                name_of_lesson = tt_file[user_date_str][result[2]["year_of_study"]][lesson][0]
-                audience_and_teacher = tt_file[user_date_str][result[2]["year_of_study"]][lesson][1]
+                name_of_lesson = tt_file[user_date_str][result["student_info"]["year_of_study"]][lesson][0]
+                audience_and_teacher = tt_file[user_date_str][result["student_info"]["year_of_study"]][lesson][1]
                 if len(name_of_lesson):
                     timetable_str += f"\nПара номер {lesson + 1}: {name_of_lesson}\nПреподаватель и аудитория: {audience_and_teacher};"
         else:

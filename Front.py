@@ -123,7 +123,7 @@ def handle_text(message):
     if status == 'Учитель 👨‍🏫👩‍🏫':
         json_work_new.update_last_user_command_t(user_id, message.text)
     else:
-        json_work_new.update_last_user_command_s(user_id)
+        json_work_new.update_last_user_command_s(user_id, message.text)
     user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
     user_markup1.row('ЕПФ')
     user_markup1.row('Исторический')
@@ -150,7 +150,8 @@ def send_daily_notifications(message):
     course= message.text
     course= course[0]
     if status != 'Учитель 👨‍🏫👩‍🏫' :
-        if course  and faculty:
+        if not course  and faculty:
+            print('hello')
             pass
         else:
             user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
@@ -196,13 +197,15 @@ def handle_text(message):
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
     if status == 'Староста 🤠' or status == 'Студент 🤓':
         day= message.text
-        day= day[0]     
-        if faculty == '':
+        day= day[0]
+        curriculum = json_work_new.get_timetable(user_id, int(day))
+        bot.send_message(user_id, curriculum)    
+        '''if faculty == '':
             bot.send_message(message.from_user.id, 'Выберите факультет:')
         elif times == '':
             bot.send_message(message.from_user.id, 'Выберите курс:')
         else:
-            curriculum = json_work_new.get_timetable(user_id, day) #получение расписания
+             #получение расписания'''
 
 @bot.message_handler(func=lambda mess: 'Отправить сообщения студентам' == mess.text , content_types=['text'])
 def handle_text(message):
