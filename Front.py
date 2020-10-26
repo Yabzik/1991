@@ -139,7 +139,7 @@ def handle_text(message):
             bot.send_message(message.from_user.id, 'Выберите факультет:')
         elif times == '':
             bot.send_message(message.from_user.id, 'Выберите курс:')
-        elif:
+        else:
             curriculum = json_work_new.get_timetable(user_id, day) #получение расписания
 
 bot.polling()
