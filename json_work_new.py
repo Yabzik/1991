@@ -81,14 +81,14 @@ def get_student_status(telegram_id):
     return student_info["status"]
 
 
-def get_group_list_id(student_grop):
+def get_group_list_id(student_group):
     '''Получение списка идентификаторов студентов определенной группы для дальнейшей обработки'''
     list_of_students = read_data_file()["list_of_students"]
     list_of_students_id = []
     
-    for student_info in list_of_students.values():
-        if student_info["student_group"] == student_group:
-            list_of_students_id.append(int(student_info["telegram_id"]))
+    for telegram_id in list_of_students.keys():
+        if list_of_students[telegram_id]["student_group"] == student_group:
+            list_of_students_id.append(int(telegram_id))
     
     return list_of_students_id
 
@@ -151,7 +151,7 @@ def update_last_user_command_t(telegram_id, command):
     file_work = read_data_file()
     file_work["list_of_teachers"][telegram_id]["last_user_command"] = command
 
-    with open("json_work_file.json", "w", encoding="utf-8") as f_write:
+    with open("json_test_data.json", "w", encoding="utf-8") as f_write:
             json.dump(file_work, f_write, ensure_ascii=False)
     
     return
@@ -162,7 +162,7 @@ def update_last_bot_msg_t(telegram_id, msg):
     file_work = read_data_file()
     file_work["list_of_teachers"][telegram_id]["last_bot_msg"] = msg
 
-    with open("json_work_file.json", "w", encoding="utf-8") as f_write:
+    with open("json_test_data.json", "w", encoding="utf-8") as f_write:
             json.dump(file_work, f_write, ensure_ascii=False)
     
     return
