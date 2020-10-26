@@ -5,6 +5,7 @@ import datetime
 import urllib.request, json 
 import json_work_new
 import config
+import parser
 
 bot = telebot.TeleBot(config.token)
 faculty = ''
@@ -142,4 +143,10 @@ def handle_text(message):
         else:
             curriculum = json_work_new.get_timetable(user_id, day) #получение расписания
 
+
+def notify(faculty_code, year):
+    if not year:
+        json_work_new.find_students({})
+    
+parser.notify_callback = notify
 bot.polling()
