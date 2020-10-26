@@ -21,7 +21,7 @@ starosta_info= ''
 @bot.message_handler(commands=['subject'])
 def handle_text(message):
     user_id = str(message.from_user.id)   
-    #status= json_work_new.get_user_status(user_id) #получение ID пользователя
+    status= json_work_new.get_user_status(user_id) #получение ID пользователя
     #status= 'Учитель 👨‍🏫👩‍'
     user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
     if status == 'Студент 🤓' :
