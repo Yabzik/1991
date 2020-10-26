@@ -106,7 +106,6 @@ starosta_info= ''
 def handle_text(message):
     user_id = str(message.from_user.id)   
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
-    #status= 'Учитель 👨‍🏫👩‍'
     user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
     if status == 'Студент 🤓' :
         user_markup.row('Получить расписание')
@@ -122,7 +121,6 @@ def handle_text(message):
     user_id = str(message.from_user.id)   
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
     if status == 'Учитель 👨‍🏫👩‍🏫':
-        print(message.text)
         json_work_new.update_last_user_command_t(user_id, message.text)
     else:
         json_work_new.update_last_user_command_s(user_id)
@@ -139,7 +137,6 @@ def handle_text(message):
 def handle_text(message):
     status = json_work_new.get_user_status(user_id) #получение ID пользователя
     faculty = message.text
-    print(faculty)
     user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
     user_markup1.row('1 курс', '2 курс')
     user_markup1.row('3 курс', '4 курс')
@@ -152,8 +149,6 @@ def send_daily_notifications(message):
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
     course= message.text
     course= course[0]
-    print(course)
-    print(status)
     if status != 'Учитель 👨‍🏫👩‍🏫' :
         if course  and faculty:
             pass
@@ -197,7 +192,6 @@ def handle_text(message):
        
 @bot.message_handler(func=lambda mess: '1 Понедельник' == mess.text or '2 Вторник' == mess.text or '3 Среда' == mess.text or '4 Четверг' == mess.text or '5 Пятница' == mess.text or '6 Суббота' == mess.text or '7 Воскресенье' == mess.text, content_types=['text'])
 def handle_text(message):
-    print('something')
     user_id = str(message.from_user.id) 
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
     if status == 'Староста 🤠' or status == 'Студент 🤓':
@@ -221,14 +215,12 @@ def handle_text(message):
     global result
     user_id = str(message.from_user.id) 
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
-    command = json_work_new.get_last_user_command_t(user_id)
-    print("something")
-    print(command, status)
+    if status= 'Учитель 👨‍🏫👩‍🏫' :
+        command = json_work_new.get_last_user_command_t(user_id)
     if command=='Получить спиcок студентов' and status == 'Учитель 👨‍🏫👩‍🏫':
         if course and faculty:
             pass
         else:
-            print("something")
             groups=message.text
             result = [x.strip(' ') for x in groups.split(',')]
             groups_list = json_work_new.get_full_group_list()
@@ -246,10 +238,10 @@ def handle_text(message):
             id_list = json_work_new.get_group_list_id(i)
             for j in id_list:
                 teacher_initials = json_work_new.get_teacher_name_and_father_name(str(message.from_user.id))
-                teacher_initials = teacher_initials + message.text
+                teacher_initials = teacher_initials + ': ' + message.text
                 bot.send_message(j, teacher_initials)
     else:
-        print('nothing')
+        bot.send_message(message.from_user.id, 'не поняв')
      
 
         
