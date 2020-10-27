@@ -42,7 +42,7 @@ def handle_text(message):
     bot.send_message(message.from_user.id, 'Выберите пункт меню:', reply_markup=user_markup)
 
 
-@bot.message_handler(func=lambda mess: 'Отменить' == mess.text, content_types=['text'])
+@bot.message_handler(func=lambda mess: 'Отменить действие' == mess.text, content_types=['text'])
 def handle_text(message):
     user_id = str(message.from_user.id)   
     user_status = json_work_new.get_user_status(user_id)
@@ -74,6 +74,9 @@ def handle_text(message):
             #if last_command == 
             json_work_new.update_last_user_command_s(user_id, message.text)
             bot.send_message(message.from_user.id, 'Введите сообщение:')
+            user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
+            user_markup.row('Отменить действие')
+            bot.send_message(message.from_user.id, '', reply_markup=user_markup)
 
         else:
             if status == 'Студент 🤓':
@@ -98,7 +101,7 @@ def handle_text(message):
         user_markup.row('3. Среда', '4. Четверг')
         user_markup.row('5. Пятница', '6. Суббота')
         user_markup.row('7. Воскресенье')
-        user_markup.row('Отменить')
+        user_markup.row('Отменить действие')
 
         bot.send_message(message.from_user.id, 'Выберите день:', reply_markup=user_markup)
     else:
@@ -144,7 +147,7 @@ def handle_text(message):
         user_markup.row('Исторический')
         user_markup.row('Филология')
         user_markup.row('Иностранные языки')
-        user_markup.row('Отменить')
+        user_markup.row('Отменить действие')
         bot.send_message(message.from_user.id, 'Выберите факультет:', reply_markup=user_markup)
 
     else:
@@ -167,7 +170,7 @@ def handle_text(message):
         user_markup1.row('1 курс', '2 курс')
         user_markup1.row('3 курс', '4 курс')
         user_markup1.row('5 курс', '6 курс')
-        user_markup1.row('Отменить')
+        user_markup1.row('Отменить действие')
         bot.send_message(message.from_user.id, 'Выберите курс:', reply_markup=user_markup1)
 
     else:
@@ -193,7 +196,7 @@ def handle_text(message):
             for name_of_group in list_of_groups:
                 user_markup.row(name_of_group)          
             
-            user_markup.row('Отменить')    
+            user_markup.row('Отменить действие')    
             bot.send_message(message.from_user.id, 'Выберите название группы, список студентов которой вы хотите получить', reply_markup=user_markup)
             json_work_new.update_last_bot_msg_t(user_id, 'Выберите название группы, список студентов которой вы хотите получить')
 
@@ -239,7 +242,7 @@ def handle_text(message):
         if user_status == 'Учитель 👨‍🏫👩‍🏫':
             json_work_new.update_last_user_command_t(user_id, message.text)
             user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
-            user_markup.row('Отменить')
+            user_markup.row('Отменить действие')
             bot.send_message(message.from_user.id, 'Введите сообщение:', reply_markup=user_markup)
 
         else:
