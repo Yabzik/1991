@@ -251,6 +251,7 @@ def handle_text(message):
         user_markup1.row(f'Отправить сообщения студентам')
         bot.send_message(message.from_user.id, 'Выберите действие:', reply_markup=user_markup1) 
     elif status == 'Учитель 👨‍🏫👩‍🏫' and user_command == 'Отправить сообщения студентам':
+        print(group)
         id_list = json_work_new.get_group_list_id(group)
         for j in id_list:
             if status == 'Учитель 👨‍🏫👩‍🏫':
