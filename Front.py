@@ -233,7 +233,7 @@ def handle_text(message):
         json_work_new.update_last_user_command_t(user_id, "")
         bot.send_message(message.from_user.id, "Отказано в доступе")
 
-@bot.message_handler(func=lambda mess: 'Отправить сообщения студентам' == mess.text , content_types=['text'])
+@bot.message_handler(func=lambda mess: 'Отправить сообщение студентам' == mess.text , content_types=['text'])
 def handle_text(message):
         user_id = str(message.from_user.id)
         user_status = json_work_new.get_user_status(user_id)
@@ -262,26 +262,31 @@ def handle_text(message):
         user_command = json_work_new.get_last_user_command_s(user_id)
     
     if user_command =='Получить список студентов' and user_status == 'Учитель 👨‍🏫👩‍🏫' and bot_command == 'Выберите название группы, список студентов которой вы хотите получить':
-        group = message.text
-        group_list = json_work_new.get_group_list(group)
+        student_group = message.text
+        group_list = json_work_new.get_group_list(student_group)
 
         bot.send_message(message.from_user.id, group_list) 
-        json_work_new.update_chosen_faculty(user_id, message.text)
+        json_work_new.update_chosen_faculty(user_id, student_group)
         json_work_new.update_last_bot_msg_t(user_id, "")
             
         user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
         user_markup.row('Получить список студентов')
-        user_markup.row('Отправить сообщения студентам')
+
+        if group_list != f"Пока нет зарегестрированных студентов в нашей системе из группы {student_group} 😐":
+            user_markup.row('Отправить сообщение студентам')
+
+        else:
+            json_work_new.update_chosen_faculty(user_id, "")
 
         bot.send_message(message.from_user.id, 'Выберите действие:', reply_markup=user_markup)
 
-    elif user_status == 'Учитель 👨‍🏫👩‍🏫' and user_command == 'Отправить сообщения студентам':
+    elif user_status == 'Учитель 👨‍🏫👩‍🏫' and user_command == 'Отправить сообщение студентам':
         group = json_work_new.get_chosen_faculty(user_id)
         group_list_id = json_work_new.get_group_list_id(group)
 
         for student_id in group_list_id:
             teacher_initials = json_work_new.get_teacher_name_and_father_name(str(message.from_user.id))
-            teacher_initials ='Переподователь ' + teacher_initials + ' отправил сообщение студентам вашей группы:\n' + message.text
+            teacher_initials ='Преподаватель ' + teacher_initials + ' отправил сообщение студентам вашей группы:\n' + message.text
             bot.send_message(student_id, teacher_initials)
 
         bot.send_message(message.from_user.id, f"Ваше сообщение успешно доставлено студентам группы {group}!")
