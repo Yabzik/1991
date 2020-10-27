@@ -218,7 +218,7 @@ def handle_text(message):
 
         user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
         
-        if status == 'Студент 🤓':
+        if user_status == 'Студент 🤓':
             user_markup.row('Получить расписание')
 
         else:
@@ -279,7 +279,7 @@ def handle_text(message):
 
         for student_id in group_list_id:
             teacher_initials = json_work_new.get_teacher_name_and_father_name(str(message.from_user.id))
-            teacher_initials ='Переподователь ' + teacher_initials + ' отправил сообщение студентам вашей группы: \n' + message.text
+            teacher_initials ='Переподователь ' + teacher_initials + ' отправил сообщение студентам вашей группы:\n' + message.text
             bot.send_message(student_id, teacher_initials)
 
         bot.send_message(message.from_user.id, f"Ваше сообщение успешно доставлено студентам группы {group}!")
@@ -289,16 +289,19 @@ def handle_text(message):
         bot.send_message(message.from_user.id, 'Выберите пункт меню:', reply_markup=user_markup)
 
     elif user_status == 'Староста 🤠' and user_command == 'Отправить сообщение своим студентам':
-        result=json_work_new.get_student_group(user_id)
-        id_list = json_work_new.get_group_list_id(result)
-        starosta_initials = "Староста: " + message.text
-        for i in id_list:
-            bot.send_message(i, starosta_initials)
-        bot.send_message(message.from_user.id, "Ваше сообщение доставлено студентам")
+        headman_group = json_work_new.get_student_group(user_id)
+        group_list_id = json_work_new.get_group_list_id_for_headmen(headman_group)
+        headman_text_for_students = "Староста вашей группы отправил сообщение студентам:\n" + message.text
+
+        for student_id in group_list_id:
+            bot.send_message(student_id, headman_text_for_students)
+        bot.send_message(message.from_user.id, "Ваше сообщение успешно доставлено студентам вашей группы!")
+
         user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
         user_markup.row('Получить расписание')
         user_markup.row('Получить список своих студентов' , 'Отправить сообщение своим студентам')
-        bot.send_message(message.from_user.id, 'Выберите действие:', reply_markup=user_markup)
+        bot.send_message(message.from_user.id, 'Выберите действие:', reply_markup=user_markup)\
+
     else:
         bot.send_message(message.from_user.id, 'не поняв')
      

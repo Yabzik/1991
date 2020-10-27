@@ -94,6 +94,18 @@ def get_group_list_id(student_group):
     return list_of_students_id
 
 
+def get_group_list_id_for_headmen(student_group):
+    '''Получение списка идентификаторов студентов определенной группы для дальнейшей обработки (без старосты)'''
+    list_of_students = read_data_file()["list_of_students"]
+    list_of_students_id = []
+    
+    for telegram_id in list_of_students.keys():
+        if list_of_students[telegram_id]["student_group"] == student_group and list_of_students[telegram_id]["status"] != 'Староста 🤠':
+            list_of_students_id.append(int(telegram_id))
+    
+    return list_of_students_id
+
+
 def get_info_about_student(telegram_id):
     '''Функция для получения информации о студенте'''
     list_of_students = read_data_file()["list_of_students"]
