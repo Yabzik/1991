@@ -93,14 +93,14 @@ def handle_text(message):
     if user_status == 'Студент 🤓' or user_status == 'Староста 🤠':
         json_work_new.update_last_user_command_s(user_id, message.text)
 
-        user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
-        user_markup1.row('1. Понедельник', '2. Вторник')
-        user_markup1.row('3. Среда', '4. Четверг')
-        user_markup1.row('5. Пятница', '6. Суббота')
-        user_markup1.row('7. Воскресенье')
-        user_markup1.row('Отменить')
+        user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
+        user_markup.row('1. Понедельник', '2. Вторник')
+        user_markup.row('3. Среда', '4. Четверг')
+        user_markup.row('5. Пятница', '6. Суббота')
+        user_markup.row('7. Воскресенье')
+        user_markup.row('Отменить')
 
-        bot.send_message(message.from_user.id, 'Выберите день:', reply_markup=user_markup1)
+        bot.send_message(message.from_user.id, 'Выберите день:', reply_markup=user_markup)
     else:
         json_work_new.update_last_user_command_t(user_id, "")
         bot.send_message(message.from_user.id, 'Отказано в доступе')
@@ -111,21 +111,21 @@ def handle_text(message):
     user_id = str(message.from_user.id)   
     user_status = json_work_new.get_user_status(user_id)
 
-    if status == 'Староста 🤠':
+    if user_status == 'Староста 🤠':
         headman_group = json_work_new.get_student_group(user_id)
-        group_list = json_work_new.get_group_list(result)
+        group_list = json_work_new.get_group_list(headman_group)
         bot.send_message(message.from_user.id, group_list)
 
         user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
         user_markup.row('Получить расписание')
         user_markup.row('Получить список своих студентов' , 'Отправить сообщение своим студентам')
-        bot.send_message(message.from_user.id, 'Выберите действие:', reply_markup=user_markup1)
+        bot.send_message(message.from_user.id, 'Выберите действие:', reply_markup=user_markup)
 
     else:
-        if status == 'Студент 🤓':
+        if suser_tatus == 'Студент 🤓':
                 json_work_new.update_last_user_command_s(user_id, "")
 
-        elif status == 'Учитель 👨‍🏫👩‍🏫':
+        elif user_status == 'Учитель 👨‍🏫👩‍🏫':
             json_work_new.update_last_user_command_t(user_id, "")
 
         bot.send_message(message.from_user.id, "Отказано в доступе")
@@ -139,13 +139,13 @@ def handle_text(message):
     if user_status == 'Учитель 👨‍🏫👩‍🏫':
         json_work_new.update_last_user_command_t(user_id, message.text)
 
-        user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
-        user_markup1.row('ЕПФ')
-        user_markup1.row('Исторический')
-        user_markup1.row('Филология')
-        user_markup1.row('Иностранные языки')
-        user_markup1.row('Отменить')
-        bot.send_message(message.from_user.id, 'Выберите факультет:', reply_markup=user_markup1)
+        user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
+        user_markup.row('ЕПФ')
+        user_markup.row('Исторический')
+        user_markup.row('Филология')
+        user_markup.row('Иностранные языки')
+        user_markup.row('Отменить')
+        bot.send_message(message.from_user.id, 'Выберите факультет:', reply_markup=user_markup)
 
     else:
         json_work_new.update_last_user_command_s(user_id, "")
@@ -261,7 +261,7 @@ def handle_text(message):
                 teacher_initials = json_work_new.get_teacher_name_and_father_name(str(message.from_user.id))
                 teacher_initials ='Переподователь ' + teacher_initials + ' отправил студентам вашей группы: \n' + message.text
                 bot.send_message(j, teacher_initials)
-        bot.send_message(message.from_user.id, "Ваше сообщение доставлено студентам")
+        bot.send_message(message.from_user.id, f"Ваше сообщение доставлено студентам группы {group}")
         user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
         user_markup.row('Получить список студентов')
         bot.send_message(message.from_user.id, 'Выберите пункт меню:', reply_markup=user_markup)
