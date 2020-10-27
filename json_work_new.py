@@ -132,6 +132,14 @@ def get_info_about_unregistered_student(telegram_id):
 
     return info
 
+
+def get_list_of_faculties():
+    '''Функция для получения списка доступных факультетов'''
+    list_of_faculties = list(read_group_data().keys())
+
+    return list_of_faculties
+
+
 def get_info_about_student(telegram_id):
     '''Функция для получения информации о студенте'''
     list_of_students = read_data_file()["list_of_students"]
