@@ -98,6 +98,7 @@ def handle_text(message):
         user_markup1.row('3. Среда', '4. Четверг')
         user_markup1.row('5. Пятница', '6. Суббота')
         user_markup1.row('7. Воскресенье')
+        user_markup1.row('Отменить')
 
         bot.send_message(message.from_user.id, 'Выберите день:', reply_markup=user_markup1)
     else:
@@ -183,8 +184,9 @@ def handle_text(message):
         json_work_new.update_last_user_command_t(user_id, "Получить список студентов")
         faculty = json_work_new.get_chosen_faculty(user_id)
         json_work_new.update_chosen_faculty(user_id, "")
+        list_of_groups_txt = json_work_new.get_list_of_group_text(faculty, year_of_study)
         list_of_groups = json_work_new.get_list_of_group(faculty, year_of_study)
-        bot.send_message(message.from_user.id, list_of_groups)  
+        bot.send_message(message.from_user.id, list_of_groups_txt)  
         user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
         for i in list_of_groups:
             user_markup.row(i)          
@@ -264,7 +266,7 @@ def handle_text(message):
             for j in id_list:
                 if status == 'Учитель 👨‍🏫👩‍🏫':
                     teacher_initials = json_work_new.get_teacher_name_and_father_name(str(message.from_user.id))
-                    teacher_initials = teacher_initials + ': ' + message.text
+                    teacher_initials ='Переподователь ' teacher_initials + ' отправил: ' + message.text
                     bot.send_message(j, teacher_initials)
             bot.send_message(message.from_user.id, "Ваше сообщение доставлено студентам")
             user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
