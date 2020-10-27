@@ -191,7 +191,7 @@ def handle_text(message):
         for name_of_group in list_of_groups:
             user_markup.row(name_of_group)          
             
-        user_markup1.row('Отменить')    
+        user_markup.row('Отменить')    
         bot.send_message(message.from_user.id, 'Напишите название группы, студентам которой вы хотите оправить сообщение:', reply_markup=user_markup)
         json_work_new.update_last_bot_msg_t(user_id,'Напишите название группы, студентам которой вы хотите оправить сообщение:')
 
