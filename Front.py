@@ -233,7 +233,6 @@ def handle_text(message):
 
 @bot.message_handler(content_types=['text'])
 def handle_text(message):
-    group=message.text
     user_id = str(message.from_user.id) 
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
     if status == 'Учитель 👨‍🏫👩‍🏫' :
@@ -243,14 +242,17 @@ def handle_text(message):
         user_command = json_work_new.get_last_user_command_s(user_id)
     
     if user_command=='Получить список студентов' and status == 'Учитель 👨‍🏫👩‍🏫' and bot_command == 'Напишите название группы, студентам которой вы хотите оправить сообщение:':
+        group=message.text
         stud_list = json_work_new.get_group_list(group) #получение списка студентов
         bot.send_message(message.from_user.id, stud_list) 
+        json_work_new.update_chosen_faculty(user_id,message.text)
             
         user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
         user_markup1.row('Получить список студентов')
         user_markup1.row(f'Отправить сообщения студентам')
         bot.send_message(message.from_user.id, 'Выберите действие:', reply_markup=user_markup1) 
     elif status == 'Учитель 👨‍🏫👩‍🏫' and user_command == 'Отправить сообщения студентам':
+        group = json_work_new.get_chosen_faculty(user_id)
         print(group)
         id_list = json_work_new.get_group_list_id(group)
         for j in id_list:
