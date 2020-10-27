@@ -1,5 +1,6 @@
 import json
 import datetime as dt
+import emoji
 
 
 ''' 
@@ -282,12 +283,14 @@ def get_timetable(telegram_id, user_weekday=None, date=None):
         timetable_str = ""
 
         #user_date_str = "25.09.2020"
+        numerals = ['I', 'II', 'III', 'IV']
         if user_date_str in tt_file.keys():
             for lesson in range(4):
                 name_of_lesson = tt_file[user_date_str][result["student_info"]["year_of_study"]][lesson][0]
                 audience_and_teacher = tt_file[user_date_str][result["student_info"]["year_of_study"]][lesson][1]
                 if len(name_of_lesson):
-                    timetable_str += f"\nПара номер {lesson + 1}: {name_of_lesson}\nПреподаватель и аудитория: {audience_and_teacher};"
+                    em = emoji.choose(' '.join([name_of_lesson, audience_and_teacher]))
+                    timetable_str += f"\n{numerals[lesson]}. {em} {name_of_lesson}\nПреподаватель и аудитория: {audience_and_teacher};"
         else:
             return "На этот день для тебя не составили расписание🥺("
         if len(timetable_str):
