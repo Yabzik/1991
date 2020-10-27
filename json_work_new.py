@@ -205,6 +205,24 @@ def get_group_list(student_group):
     return list_of_students_in_group_str
 
 
+def get_chosen_faculty(telegram_id):
+    '''Функция для получения выбранного * учителем факультета'''
+    teacher_info = read_data_file()["list_of_teachers"][telegram_id]
+
+    return teacher_info["chosen_faculty"]
+
+
+def update_chosen_faculty(telegram_id, name_of_faculty):
+    '''Функция для обновления выбранного * учителем факультета'''
+    file_work = read_data_file()
+    file_work["list_of_teachers"][telegram_id]["chosen_faculty"] = name_of_faculty
+
+    with open("json_test_data.json", "w", encoding="utf-8") as f_write:
+            json.dump(file_work, f_write, ensure_ascii=False)
+    
+    return
+
+
 def read_data_file():
     '''Функция для получения базы студентов '''
     with open("json_test_data.json", "r", encoding="utf-8") as f_read:
