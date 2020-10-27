@@ -116,7 +116,7 @@ def handle_text(message):
         user_markup.row('Получить список студентов')
     bot.send_message(message.from_user.id, 'Выберите пункт меню:', reply_markup=user_markup)
 
-@bot.message_handler(commands=['Отменить'])
+@bot.message_handler(func=lambda mess: 'Отменить' == mess.text, content_types=['text'])
 def handle_text(message):
     user_id = str(message.from_user.id)   
     status= json_work_new.get_user_status(user_id) #получение ID пользователя
@@ -130,7 +130,7 @@ def handle_text(message):
         user_markup.row('Получить список студентов')
     bot.send_message(message.from_user.id, 'Выберите пункт меню:', reply_markup=user_markup)
 
-@bot.message_handler(func=lambda mess: 'Отправить сообщение своим студентам' == mess.text , content_types=['text'])
+@bot.message_handler(func=lambda mess: 'Отправить сообщение своим студентам' == mess.text, content_types=['text'])
 def handle_text(message):
         user_id = str(message.from_user.id) 
         status= json_work_new.get_user_status(user_id) #получение ID пользователя
@@ -150,7 +150,6 @@ def handle_text(message):
         user_markup1.row('3 Среда', '4 Четверг')
         user_markup1.row('5 Пятница', '6 Суббота')
         user_markup1.row('7 Воскресенье')
-        user_markup1.row('Отменить')
         bot.send_message(message.from_user.id, 'Выберите день:', reply_markup=user_markup1)
     else:
         bot.send_message(message.from_user.id, 'Отказано в доступе')
@@ -187,14 +186,6 @@ def handle_text(message):
         user_markup1.row('Отменить')
         bot.send_message(message.from_user.id, 'Выберите действие:', reply_markup=user_markup1)
     
-   ''' elif status == 'Староста 🤠' or status == 'Студент 🤓' and command == 'Получить расписание' :
-        user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
-        user_markup1.row('1 Понедельник', '2 Вторник')
-        user_markup1.row('3 Среда', '4 Четверг')
-        user_markup1.row('5 Пятница', '6 Суббота')
-        user_markup1.row('7 Воскресенье')
-        user_markup1.row('Отменить')
-        bot.send_message(message.from_user.id, 'Выберите день:', reply_markup=user_markup1)'''
     
 @bot.message_handler(func=lambda mess: 'ЕПФ' == mess.text or
                      'Исторический' == mess.text or 'Филилогия' == mess.text or
@@ -311,7 +302,6 @@ def handle_text(message):
                     bot.send_message(j, teacher_initials)
             user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
             user_markup.row('Получить список студентов')
-            user_markup.row('Отменить')
             bot.send_message(message.from_user.id, 'Выберите пункт меню:', reply_markup=user_markup)
 
     elif status == 'Староста 🤠' and command == 'Отправить сообщение своим студентам':
@@ -320,10 +310,10 @@ def handle_text(message):
         starosta_initials = "Староста: " + message.text
         for i in id_list:
             bot.send_message(i, starosta_initials)
+        bot.send_message(message.from_user.id, "Ваше сообщение доставлено студентам")
         user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
         user_markup1.row('Получить расписание')
         user_markup1.row('Получить список студентов' , 'Отправить сообщение своим студентам')
-        user_markup1.row('Отменить')
         bot.send_message(message.from_user.id, 'Выберите действие:', reply_markup=user_markup1)
     else:
         bot.send_message(message.from_user.id, 'не поняв')
