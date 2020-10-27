@@ -264,9 +264,9 @@ def add_new_student(dict_of_param, telegram_id):
     
     if result["staus_value"]:
         list_of_students = read_data_file()
-        list_of_students["list_of_students"].append(dict_of_param)
-        with open("json_work_file.json", "w", encoding="utf-8") as f_write:
-            json.dump(f_dict, f_write, ensure_ascii=False)
+        list_of_students["list_of_students"][telegram_id] = dict_of_param
+        with open("json_test_data.json", "w", encoding="utf-8") as f_write:
+            json.dump(list_of_students, f_write, ensure_ascii=False)
     
     return result["status_msg"]
 
@@ -286,11 +286,18 @@ def add_new_teacher(dict_of_param, telegram_id):
     
     if result["staus_value"]:
         list_of_students = read_data_file()
-        list_of_students["list_of_students"].append(dict_of_param)
-        with open("json_work_file.json", "w", encoding="utf-8") as f_write:
-            json.dump(f_dict, f_write, ensure_ascii=False)
+        list_of_students["list_of_teachers"][telegram_id] = dict_of_param
+        with open("json_test_data.json", "w", encoding="utf-8") as f_write:
+            json.dump(list_of_students, f_write, ensure_ascii=False)
     
     return result["status_msg"]
+
+
+def user_is_registered(telegram_id):
+    '''Функция для проверки наличия пользователя в базе студентов или преподавателей'''
+    data = read_data_file()
+    
+    return telegram_id in data["list_of_students"] or telegram_id in data["list_of_teachers"]
 
 
 def get_timetable(telegram_id, user_weekday=None, date=None):
