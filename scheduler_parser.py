@@ -2,6 +2,7 @@ import xlrd
 import json
 import os
 import requests
+import config
 
 # основы директорий для получения расписания
 TIMETABLE_BASE = {
@@ -114,5 +115,5 @@ notify_callback = None
 
 from apscheduler.schedulers.background import BackgroundScheduler
 scheduler = BackgroundScheduler()
-scheduler.add_job(poll, 'interval', seconds=15)
+scheduler.add_job(poll, 'interval', seconds=config.schedule_update_seconds)
 scheduler.start()

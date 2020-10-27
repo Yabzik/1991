@@ -89,7 +89,7 @@ import json_work_new
 import config
 import scheduler_parser
 
-bot = telebot.TeleBot("1322097005:AAGvV3aNffzGagk2u6yW-IiiK8XI4EXMxy0")
+bot = telebot.TeleBot(config.token)
 faculty = 'Филология'
 course = ''
 times = ''
@@ -285,18 +285,14 @@ def handle_text(message):
             bot.send_message(i, starosta_initials)
     else:
         bot.send_message(message.from_user.id, 'не поняв')
-     
 
-        
-        
+
 def notify(faculty_code, year_of_study, date):
     students = {}
     if not year_of_study:
         students.update(json_work_new.find_students({'code_of_group': faculty_code}))
     else:
         students.update(json_work_new.find_students({'code_of_group': faculty_code, 'year_of_study': year_of_study}))
-
-    print(students)
 
     for telegram_id, data in students.items():
         curriculum = json_work_new.get_timetable(telegram_id, date=date)
