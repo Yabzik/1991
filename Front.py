@@ -183,7 +183,6 @@ def handle_text(message):
         user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
         user_markup1.row('Получить расписание')
         user_markup1.row('Получить список студентов' , 'Отправить сообщение своим студентам')
-        user_markup1.row('Отменить')
         bot.send_message(message.from_user.id, 'Выберите действие:', reply_markup=user_markup1)
     
     
@@ -246,7 +245,6 @@ def handle_text(message):
         else:
             user_markup.row('Получить расписание')
             user_markup.row('Получить список студентов' , 'Отправить сообщение своим студентам')
-            user_markup.row('Отменить')
         bot.send_message(message.from_user.id, 'Выберите пункт меню:', reply_markup=user_markup)
         '''if faculty == '':
             bot.send_message(message.from_user.id, 'Выберите факультет:')
@@ -290,7 +288,6 @@ def handle_text(message):
         user_markup1 = telebot.types.ReplyKeyboardMarkup(True, False)
         user_markup1.row('Получить список студентов')
         user_markup1.row(f'Отправить сообщения студентам')
-        user_markup1.row('Отменить')
         bot.send_message(message.from_user.id, 'Выберите действие:', reply_markup=user_markup1) 
     elif status == 'Учитель 👨‍🏫👩‍🏫' and command == 'Отправить сообщения студентам':
         for i in result:
@@ -300,6 +297,7 @@ def handle_text(message):
                     teacher_initials = json_work_new.get_teacher_name_and_father_name(str(message.from_user.id))
                     teacher_initials = teacher_initials + ': ' + message.text
                     bot.send_message(j, teacher_initials)
+            bot.send_message(message.from_user.id, "Ваше сообщение доставлено студентам")
             user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
             user_markup.row('Получить список студентов')
             bot.send_message(message.from_user.id, 'Выберите пункт меню:', reply_markup=user_markup)
