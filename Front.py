@@ -73,10 +73,9 @@ def handle_text(message):
         if user_status == 'Староста 🤠' :
             #if last_command == 
             json_work_new.update_last_user_command_s(user_id, message.text)
-            bot.send_message(message.from_user.id, 'Введите сообщение:')
             user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
             user_markup.row('Отменить действие')
-            bot.send_message(message.from_user.id, '', reply_markup=user_markup)
+            bot.send_message(message.from_user.id, 'Введите сообщение:', reply_markup=user_markup)
 
         else:
             if status == 'Студент 🤓':
