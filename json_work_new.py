@@ -106,6 +106,32 @@ def get_group_list_id_for_headmen(student_group):
     return list_of_students_id
 
 
+def add_info_about_unregistered_student(dict_of_param, telegram_id):
+    ''''''
+    data = read_data_file()
+    data["list_of_unregistered_users"][telegram_id] = dict_of_param
+    with open("json_test_data.json", "w", encoding="utf-8") as f_write:
+        json.dump(data, f_write, ensure_ascii=False)
+
+    return
+
+
+def get_info_about_unregistered_student(telegram_id):
+    ''''''
+    list_of_unregistered_users = read_data_file()["list_of_unregistered_users"][telegram_id]
+    louu = list_of_unregistered_users
+
+    info = f'''\tИнформация о студенте:
+    Имя: {louu["student_name"]}
+    Фамилия: {louu["student_family_name"]}
+    Факультет: {louu["name_of_faculty"]}
+    Курс: {louu["year_of_study"]}
+    Группа: {louu["student_group"]}
+    Статус: {louu["status"]}
+    '''
+
+    return info
+
 def get_info_about_student(telegram_id):
     '''Функция для получения информации о студенте'''
     list_of_students = read_data_file()["list_of_students"]
@@ -263,10 +289,10 @@ def add_new_student(dict_of_param, telegram_id):
     result = check_student(telegram_id)
     
     if result["staus_value"]:
-        list_of_students = read_data_file()
-        list_of_students["list_of_students"][telegram_id] = dict_of_param
+        data = read_data_file()
+        data["list_of_students"][telegram_id] = dict_of_param
         with open("json_test_data.json", "w", encoding="utf-8") as f_write:
-            json.dump(list_of_students, f_write, ensure_ascii=False)
+            json.dump(data, f_write, ensure_ascii=False)
     
     return result["status_msg"]
 
@@ -293,10 +319,17 @@ def add_new_teacher(dict_of_param, telegram_id):
     return result["status_msg"]
 
 
+def user_in_unregistered_list(telegram_id):
+    list_of_unregistered_users = read_data_file()["list_of_unregistered_users"]
+
+    return telegram_id in list_of_unregistered_users.keys()
+
+
 def user_is_registered(telegram_id):
     '''Функция для проверки наличия пользователя в базе студентов или преподавателей'''
     data = read_data_file()
-    
+    print('hello')
+
     return telegram_id in data["list_of_students"] or telegram_id in data["list_of_teachers"]
 
 

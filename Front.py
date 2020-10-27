@@ -269,9 +269,37 @@ def handle_text(message):
             bot.send_message(message.from_user.id, "Отказано в доступе")
     
 
+
+@bot.message_handler(func=lambda mess: "Зарегестрироваться как студент" == mess.text, content_types=['text'])
+def handle_text(message):
+    user_id = str(message.from_user.id)
+
+    if not json_work_new.user_is_registered(user_id):
+        if not json_work_new.user_in_unregistered_list(user_id):
+            dict_of_param = {
+                "student_name": message.from_user.first_name, 
+                "student_family_name": message.from_user.last_name,
+                "name_of_faculty" : "",
+                "year_of_study" : "",
+                "student_group" : "",
+                "status": ""
+        }
+
+            json_work_new.add_info_about_unregistered_student(dict_of_param, user_id)
+            info = json_work_new.get_info_about_unregistered_student(user_id)
+            bot.send_message(message.from_user.id, info)
+
+            #добавить кнопки
+        else:
+            bot.send_message(message.from_user.id, "Вы уже выбирали это!")
+
+    else:
+        bot.send_message(message.from_user.id, "Не понел(")
+
 @bot.message_handler(content_types=['text'])
 def handle_text(message):
     user_id = str(message.from_user.id)
+
     if json_work_new.user_is_registered(user_id): 
         user_status = json_work_new.get_user_status(user_id)
 
