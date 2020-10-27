@@ -219,7 +219,7 @@ def handle_text(message):
     if status == 'Староста 🤠' or status == 'Студент 🤓':
         day= message.text
         day= day[0]
-        curriculum = json_work_new.get_timetable(user_id, int(day))
+        curriculum = json_work_new.get_timetable(user_id, user_weekday=int(day))
         bot.send_message(user_id, curriculum)    
         '''if faculty == '':
             bot.send_message(message.from_user.id, 'Выберите факультет:')
@@ -289,21 +289,20 @@ def handle_text(message):
 
         
         
-#def notify(faculty_code, year_of_study, date):
-    # students = {}
-    # if not year_of_study:
-    #     students.update(json_work_new.find_students({'code_of_group': faculty_code}))
-    # else:
-    #     students.update(json_work_new.find_students({'code_of_group': faculty_code, 'year_of_study': year_of_study}))
+def notify(faculty_code, year_of_study, date):
+    students = {}
+    if not year_of_study:
+        students.update(json_work_new.find_students({'code_of_group': faculty_code}))
+    else:
+        students.update(json_work_new.find_students({'code_of_group': faculty_code, 'year_of_study': year_of_study}))
 
-    # print(students)
+    print(students)
 
-    # for telegram_id, data in students.items():
-    #     curriculum = json_work_new.get_timetable(telegram_id, date)
-    #     bot.send_message(telegram_id, f"👀 Изменилось расписание на {date}: {curriculum}")
- #   pass
+    for telegram_id, data in students.items():
+        curriculum = json_work_new.get_timetable(telegram_id, date=date)
+        bot.send_message(telegram_id, f"👀 Изменилось расписание на {date}: {curriculum}")
 
-#scheduler_parser.notify_callback = notify
-#>>>>>>> 2218907434fef91d30ac9d961e5dbeab68585559
-bot.polling()
-input()
+scheduler_parser.notify_callback = notify
+
+# bot.polling()
+# input()

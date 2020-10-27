@@ -262,18 +262,21 @@ def add_new_teacher(dict_of_param, telegram_id):
     return result["status_msg"]
 
 
-def get_timetable(telegram_id, user_weekday):
+def get_timetable(telegram_id, user_weekday=None, date=None):
     '''Фукнция для получения расписания студента в определенный день'''
     result = check_student(telegram_id)
     
     if not result["status_value"]:
         '''Определения даты дня, который ввёл пользователь'''
-        today_d = dt.datetime.date(dt.datetime.now())
-        weekday_now = today_d.isoweekday()
-        diff = user_weekday - weekday_now
-        diff = dt.timedelta(days = diff)
-        user_date = today_d + diff
-        user_date_str = user_date.strftime("%d.%m.%Y")
+        if user_weekday:
+            today_d = dt.datetime.date(dt.datetime.now())
+            weekday_now = today_d.isoweekday()
+            diff = user_weekday - weekday_now
+            diff = dt.timedelta(days = diff)
+            user_date = today_d + diff
+            user_date_str = user_date.strftime("%d.%m.%Y")
+        elif date:
+            user_date_str = date
         '''Составления расписания в текстовом виде'''
         tt_file = read_timetable_file(result["student_info"]["code_of_group"])
         timetable_str = ""
