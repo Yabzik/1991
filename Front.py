@@ -203,33 +203,40 @@ def handle_text(message):
 @bot.message_handler(func=lambda mess: '1. Понедельник' == mess.text or '2. Вторник' == mess.text or '3. Среда' == mess.text or '4. Четверг' == mess.text or '5. Пятница' == mess.text or '6. Суббота' == mess.text or '7. Воскресенье' == mess.text, content_types=['text'])
 def handle_text(message):
     user_id = str(message.from_user.id) 
-    status= json_work_new.get_user_status(user_id) #получение ID пользователя
-    if status == 'Староста 🤠' or status == 'Студент 🤓':
-        day = message.text[0]
-        curriculum = json_work_new.get_timetable(user_id, user_weekday=int(day))
+    user_status = json_work_new.get_user_status(user_id)
 
-        
-        bot.send_message(user_id, curriculum)
+    if user_status == 'Староста 🤠' or user_status == 'Студент 🤓':
+        day = message.text[0]
+        timetable = json_work_new.get_timetable(user_id, user_weekday=int(day))
+        bot.send_message(user_id, timetable)
+
         user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
+        
         if status == 'Студент 🤓':
             user_markup.row('Получить расписание')
+
         else:
             user_markup.row('Получить расписание')
             user_markup.row('Получить список своих студентов' , 'Отправить сообщение своим студентам')
+
         bot.send_message(message.from_user.id, 'Выберите пункт меню:', reply_markup=user_markup)
-        '''if faculty == '':
-            bot.send_message(message.from_user.id, 'Выберите факультет:')
-        elif times == '':
-            bot.send_message(message.from_user.id, 'Выберите курс:')
-        else:
-             #получение расписания'''
+    
+    else:
+        json_work_new.update_last_user_command_t(user_id, "")
+        bot.send_message(message.from_user.id, "Отказано в доступе")
 
 @bot.message_handler(func=lambda mess: 'Отправить сообщения студентам' == mess.text , content_types=['text'])
 def handle_text(message):
         user_id = str(message.from_user.id)
-        #status= json_work_new.get_user_status(user_id) #получение ID пользователя
-        json_work_new.update_last_user_command_t(user_id,message.text)
-        bot.send_message(message.from_user.id, 'Введите сообщение:')
+        user_status = json_work_new.get_user_status(user_id)
+
+        if user_status == 'Учитель 👨‍🏫👩‍🏫':
+            json_work_new.update_last_user_command_t(user_id, message.text)
+            bot.send_message(message.from_user.id, 'Введите сообщение:')
+
+        else:
+            json_work_new.update_last_user_command_s(user_id, "")
+            bot.send_message(message.from_user.id, "Отказано в доступе")
     
 
 @bot.message_handler(content_types=['text'])
