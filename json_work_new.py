@@ -48,14 +48,14 @@ def get_teacher_name_and_father_name(telegram_id):
 
 def get_list_of_group(name_of_faculty, year_of_study): #year_of_study - STRING!!!
     '''Функция для получения списка груп определенного факультета и курса'''
-    list_of_group = read_group_data()[name_of_faculty][year_of_study]
-    if len(list_of_group):
-        list_of_group_str = 'Список доступных групп:'
-        for num_of_group in range(len(list_of_group)):
-            list_of_group_str += f"\n{num_of_group + 1}. {list_of_group[num_of_group]}"
-        return list_of_group_str
+    list_of_groups = read_group_data()[name_of_faculty][year_of_study]
+    if len(list_of_groups):
+        list_of_groups_text = 'Список доступных групп:'
+        for num_of_group in range(len(list_of_groups)):
+            list_of_groups_text += f"\n{num_of_group + 1}. {list_of_groups[num_of_group]}"
+        return list_of_groups_text, list_of_groups
     else:
-        return "Групп в выбранном факультете и в выбранном курсе ещё нет в базе("
+        return "Групп в выбранном факультете и в выбранном курсе ещё нет в базе(", []
 
 
 def read_group_data():
