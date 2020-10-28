@@ -161,9 +161,9 @@ def handle_text(message):
     if user_status == 'Учитель 👨‍🏫👩‍🏫':
         json_work_new.update_last_user_command_t(user_id, message.text)
         
-        user_markup = telebot.types.ReplyKeyboardMarkup(True, False):
+        user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
         for i in json_work_new.get_list_of_faculties():
-            user_markup.row(i))
+            user_markup.row(i)
         user_markup.row('Отменить действие')
         bot.send_message(message.from_user.id, 'Выберите факультет:', reply_markup=user_markup)
 
@@ -608,7 +608,7 @@ def handle_text(message):
                 #Обнуление последних сообщений бота
             elif json_work_new.get_last_user_command_un(user_id) == "Изменить группу": 
                 dict_of_param = json_work_new.get_info_about_unregistered_student(user_id)
-                if message.text in json_work_new.get_full_group_list()
+                if message.text in json_work_new.get_full_group_list():
                     dict_of_param["student_group"] = message.text
                     json_work_new.add_info_about_unregistered_student(dict_of_param, user_id)
                 user_info = json_work_new.get_info_about_unregistered_student(user_id)
