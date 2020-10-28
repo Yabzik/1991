@@ -168,11 +168,18 @@ def update_last_user_command_un(telegram_id, command):
     return
 
 
+def get_info_about_unregistered_student_dict(telegram_id):
+    ''''''
+    user_info = read_data_file()["list_of_unregistered_users"][telegram_id]
+
+    return user_info
+
+
 def get_last_bot_msg_un(telegram_id):
     ''''''
     unregistered_user_info = read_data_file()["list_of_unregistered_users"][telegram_id]
     
-    return unregistered_user_info["last_user_command"]
+    return unregistered_user_info["last_bot_msg"]
 
 
 def update_last_bot_msg_un(telegram_id, command):
@@ -190,7 +197,7 @@ def get_last_user_command_un(telegram_id):
     ''''''
     unregistered_user_info = read_data_file()["list_of_unregistered_users"][telegram_id]
     
-    return unregistered_user_info["last_bot_msg"]
+    return unregistered_user_info["last_user_command"]
 
 
 def update_last_user_command_s(telegram_id, command):
