@@ -34,6 +34,17 @@ import emoji
 
 #telegram_id - STRING!!!!
 
+def remove_unregistered_user(telegram_id):
+    '''Удаление "незарегестрированного пользователя" из базы'''
+    data = read_data_file()
+    del data["list_of_unregistered_users"][telegram_id]
+
+    with open("json_test_data.json", "w", encoding="utf-8") as f_write:
+        json.dump(data, f_write, ensure_ascii=False)
+
+    return None
+
+
 def get_student_group(telegram_id):
     '''Функция для получения названия группы студента'''
     student_info = read_data_file()["list_of_students"][telegram_id]
@@ -113,7 +124,7 @@ def add_info_about_unregistered_student(dict_of_param, telegram_id):
     with open("json_test_data.json", "w", encoding="utf-8") as f_write:
         json.dump(data, f_write, ensure_ascii=False)
 
-    return
+    return None
 
 
 def get_info_about_unregistered_student(telegram_id):
