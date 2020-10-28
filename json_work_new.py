@@ -157,6 +157,42 @@ def get_info_about_student(telegram_id):
     return info
 
 
+def update_last_user_command_un(telegram_id, command):
+    ''''''
+    file_work = read_data_file()
+    file_work["list_of_unregistered_users"][telegram_id]["last_user_command"] = command
+
+    with open("json_test_data", "w", encoding="utf-8") as f_write:
+        json.dump(file_work, f_write, ensure_ascii=False)
+
+    return
+
+
+def get_last_bot_msg_un(telegram_id):
+    ''''''
+    unregistered_user_info = read_data_file()["list_of_unregistered_users"][telegram_id]
+    
+    return unregistered_user_info["last_user_command"]
+
+
+def update_last_bot_msg_un(telegram_id, command):
+    ''''''
+    file_work = read_data_file()
+    file_work["list_of_unregistered_users"][telegram_id]["last_bot_msg"] = command
+
+    with open("json_test_data", "w", encoding="utf-8") as f_write:
+        json.dump(file_work, f_write, ensure_ascii=False)
+
+    return
+
+
+def get_last_user_command_un(telegram_id):
+    ''''''
+    unregistered_user_info = read_data_file()["list_of_unregistered_users"][telegram_id]
+    
+    return unregistered_user_info["last_bot_msg"]
+
+
 def update_last_user_command_s(telegram_id, command):
     '''Функция для обновления последней команды, которую вводил пользователь'''
     file_work = read_data_file()
@@ -336,7 +372,6 @@ def user_in_unregistered_list(telegram_id):
 def user_is_registered(telegram_id):
     '''Функция для проверки наличия пользователя в базе студентов или преподавателей'''
     data = read_data_file()
-    print('hello')
 
     return telegram_id in data["list_of_students"] or telegram_id in data["list_of_teachers"]
 
