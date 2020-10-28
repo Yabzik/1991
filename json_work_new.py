@@ -162,7 +162,7 @@ def update_last_user_command_un(telegram_id, command):
     file_work = read_data_file()
     file_work["list_of_unregistered_users"][telegram_id]["last_user_command"] = command
 
-    with open("json_test_data", "w", encoding="utf-8") as f_write:
+    with open("json_test_data.json", "w", encoding="utf-8") as f_write:
         json.dump(file_work, f_write, ensure_ascii=False)
 
     return
@@ -180,7 +180,7 @@ def update_last_bot_msg_un(telegram_id, command):
     file_work = read_data_file()
     file_work["list_of_unregistered_users"][telegram_id]["last_bot_msg"] = command
 
-    with open("json_test_data", "w", encoding="utf-8") as f_write:
+    with open("json_test_data.json", "w", encoding="utf-8") as f_write:
         json.dump(file_work, f_write, ensure_ascii=False)
 
     return
