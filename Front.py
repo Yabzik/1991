@@ -426,7 +426,6 @@ def handle_text(message):
 
             else:
                 dict_of_param = json_work_new.get_info_about_unregistered_teacher_dict(user_id)
-                dict_of_param["code_of_group"] = json_work_new.get_code_of_group(user_id)
 
 
             if json_work_new.is_valid(dict_of_param):
@@ -468,7 +467,7 @@ def handler_text(message):
     if json_work_new.user_is_registered(user_id):
         user_status = json_work_new.get_user_status(user_id)
 
-        if user_status == '':
+        if user_status == 'Учитель 👨‍🏫👩‍🏫':
             json_work_new.remove_teacher(user_id)
         else:
             json_work_new.remove_student(user_id)
