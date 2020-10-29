@@ -595,7 +595,7 @@ def handle_text(message):
 
             user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
             user_markup.row("Вернуться на главное меню")
-            bot.send_message(message.from_user.id, "Введите имя:", reply_markup=user_markup)
+            bot.send_message(message.from_user.id, "Введите фамилию:", reply_markup=user_markup)
 
         else:
             bot.send_message(message.from_user.id, 'Вы ещё не начинали процесс регистрации')
@@ -809,32 +809,26 @@ def handle_text(message):
                     dict_of_param = json_work_new.get_info_about_unregistered_student_dict(user_id)
                 else:
                     dict_of_param = json_work_new.get_info_about_unregistered_teacher_dict(user_id)
-
-                if any(char.isdigit() for char in name):
-
-                    bot.send_message(message.from_user.id, 'Введенное имя содержит цифры!', reply_markup=user_markup)
+                    
+                if name.isalpha() == False:
                     user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
                     user_markup.row("Вернуться на главное меню")
+                    bot.send_message(message.from_user.id, 'Введенное имя содержит недопустимые символы!', reply_markup=user_markup)
 
-                    bot.send_message(message.from_user.id, "Введите имя: ", reply_markup=user_markup)
+                    bot.send_message(message.from_user.id, "Введите имя:")
 
+                elif user_status == 'student' and name.isalpha() == True:
+                    name = name.capitalize()
+                    dict_of_param["student_name"] = name
+                    json_work_new.add_info_about_unregistered_student(dict_of_param, user_id)
+                    user_info = json_work_new.get_info_about_unregistered_student(user_id)
+                    bot.send_message(message.from_user.id, "Отлично! Ваше имя успешно изменено")
+                    bot.send_message(message.from_user.id, user_info)
                 else:
-                    if '-' in name: 
-                        namelist = name.split('-')
-                        namelist.capitalize()
-                        name = '-'.join(name)
-                    else:
-                        name = name.capitalize()
-
-                    if user_status == 'student':
-                        dict_of_param["student_name"] = name
-                        json_work_new.add_info_about_unregistered_student(dict_of_param, user_id)
-                        user_info = json_work_new.get_info_about_unregistered_student(user_id)
-
-                    else:
-                        dict_of_param["teacher_name"] = name
-                        json_work_new.add_info_about_unregistered_teacher(dict_of_param, user_id)
-                        user_info = json_work_new.get_info_about_unregistered_teacher(user_id)
+                    name = name.capitalize()
+                    dict_of_param["teacher_name"] = name
+                    json_work_new.add_info_about_unregistered_teacher(dict_of_param, user_id)
+                    user_info = json_work_new.get_info_about_unregistered_teacher(user_id)
 
 
                     bot.send_message(message.from_user.id, "Отлично! Ваше имя успешно изменено")
@@ -875,31 +869,26 @@ def handle_text(message):
                 else:
                     dict_of_param = json_work_new.get_info_about_unregistered_teacher_dict(user_id)
 
-                if any(char.isdigit() for char in name):
-
-                    bot.send_message(message.from_user.id, 'Введенное имя содержит цифры!', reply_markup=user_markup)
+                if name.isalpha() == False:
                     user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
                     user_markup.row("Вернуться на главное меню")
+                    bot.send_message(message.from_user.id, 'Введенная фамилия содержит недопустимые символы!', reply_markup=user_markup)
 
-                    bot.send_message(message.from_user.id, "Введите имя: ", reply_markup=user_markup)
+                    bot.send_message(message.from_user.id, "Введите фамилию:")         
+
+                elif user_status == 'student' and name.isalpha() == True:
+                    name = name.capitalize()
+                    dict_of_param["student_family_name"] = name
+                    json_work_new.add_info_about_unregistered_student(dict_of_param, user_id)
+                    user_info = json_work_new.get_info_about_unregistered_student(user_id)
+                    bot.send_message(message.from_user.id, "Отлично! Ваша фамилия успешно изменено")
+                    bot.send_message(message.from_user.id, user_info)
 
                 else:
-                    if '-' in name: 
-                        namelist = name.split('-')
-                        namelist.capitalize()
-                        name = '-'.join(name)
-                    else:
-                        name = name.capitalize()
-
-                    if user_status == 'student':
-                        dict_of_param["student_family_name"] = name
-                        json_work_new.add_info_about_unregistered_student(dict_of_param, user_id)
-                        user_info = json_work_new.get_info_about_unregistered_student(user_id)
-
-                    else:
-                        dict_of_param["teacher_family_name"] = name
-                        json_work_new.add_info_about_unregistered_teacher(dict_of_param, user_id)
-                        user_info = json_work_new.get_info_about_unregistered_teacher(user_id)
+                    name = name.capitalize()
+                    dict_of_param["teacher_family_name"] = name
+                    json_work_new.add_info_about_unregistered_teacher(dict_of_param, user_id)
+                    user_info = json_work_new.get_info_about_unregistered_teacher(user_id)
 
 
                     bot.send_message(message.from_user.id, "Отлично! Ваша фамилия успешно изменено")
@@ -938,23 +927,17 @@ def handle_text(message):
                 name = message.text
                 user_status = json_work_new.get_user_status_un(user_id)
                 dict_of_param = json_work_new.get_info_about_unregistered_teacher_dict(user_id)
-
-                if any(char.isdigit() for char in name):
-
-                    bot.send_message(message.from_user.id, 'Введенное имя содержит цифры!', reply_markup=user_markup)
+                    
+                if name.isalpha() == False:
+                    
                     user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
                     user_markup.row("Вернуться на главное меню")
+                    bot.send_message(message.from_user.id, 'Отчество содержит недопустимые символы!', reply_markup=user_markup)
 
-                    bot.send_message(message.from_user.id, "Введите отчество: ", reply_markup=user_markup)
+                    bot.send_message(message.from_user.id, "Введите отчество:")
 
-                else:
-                    if '-' in name: 
-                        namelist = name.split('-')
-                        namelist.capitalize()
-                        name = '-'.join(name)
-                    else:
-                        name = name.capitalize()
-
+                if name.isalpha() == True:
+                    name = name.capitalize()
                     dict_of_param["teacher_father_name"] = name
                     json_work_new.add_info_about_unregistered_teacher(dict_of_param, user_id)
                     user_info = json_work_new.get_info_about_unregistered_teacher(user_id)
@@ -971,7 +954,7 @@ def handle_text(message):
                 user_markup.row('Изменить отчество')
                 if json_work_new.is_valid(dict_of_param):
                     user_markup.row('Завершить регистрацию')
-                user_markup.row('Отменить регистрацию')
+                    user_markup.row('Отменить регистрацию')
 
                 bot.send_message(message.from_user.id, "Выберите пункт меню", reply_markup=user_markup) 
                 
