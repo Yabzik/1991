@@ -34,6 +34,36 @@ import emoji
 
 #telegram_id - STRING!!!!
 
+def is_valid(dict_of_param):
+    for param in dict_of_param.keys():
+        if param == 'last_user_command' or param == 'last_bot_msg':
+            continue
+        if dict_of_param[param] == '':
+            return False
+    else:
+        return True
+
+
+def get_user_status_un(telegram_id):
+    user_info = read_data_file()['list_of_unregistered_users'][telegram_id]
+
+    return user_info['user_status']
+
+
+def get_info_about_unregistered_teacher(telegram_id):
+    ''''''
+    teacher_info = read_data_file()["list_of_unregistered_users"][telegram_id]
+    ti = teacher_info
+
+    teacher_info_text = f'''\tИнформация о преподавателе:
+    Имя: {ti["teacher_name"]}
+    Фамилия: {ti["teacher_family_name"]}
+    Отчество: {ti["teacher_father_name"]}
+    '''
+
+    return teacher_info_text
+
+
 def remove_unregistered_user(telegram_id):
     '''Удаление "незарегестрированного пользователя" из базы'''
     data = read_data_file()
@@ -126,6 +156,15 @@ def add_info_about_unregistered_student(dict_of_param, telegram_id):
 
     return None
 
+def add_info_about_unregistered_teacher(dict_of_param, telegram_id):
+    ''''''
+    data = read_data_file()
+    data["list_of_unregistered_users"][telegram_id] = dict_of_param
+    with open("json_test_data.json", "w", encoding="utf-8") as f_write:
+        json.dump(data, f_write, ensure_ascii=False)
+
+    return None
+
 
 def get_info_about_unregistered_student(telegram_id):
     ''''''
@@ -177,6 +216,13 @@ def update_last_user_command_un(telegram_id, command):
         json.dump(file_work, f_write, ensure_ascii=False)
 
     return
+
+
+def get_info_about_unregistered_teacher_dict(telegram_id):
+    ''''''
+    user_info = read_data_file()["list_of_unregistered_users"][telegram_id]
+
+    return user_info
 
 
 def get_info_about_unregistered_student_dict(telegram_id):
@@ -334,7 +380,20 @@ def read_timetable_file(code_of_group):
     '''Функция для полученя базы расписаний'''
     with open(f"parsed_timetable/epf/{code_of_group}-d.json", "r", encoding="utf-8") as f_read:
         text = json.load(f_read)
+
     return text
+
+
+def group_has_headmen(student_group):
+    ''''''
+    list_of_students = read_data_file()["list_of_students"]
+
+    for student_info in list_of_students.values():
+        if student_info["student_group"] == student_group:
+            if student_info["status"] == "Староста 🤠":
+                return False
+    else:
+        return True
 
 
 def check_student(telegram_id):
@@ -343,14 +402,46 @@ def check_student(telegram_id):
     if telegram_id in list_of_students:
         return {"status_value" : False, "status_msg" : "Такой студент уже есть😡!", "student_info" : list_of_students[telegram_id]}
     else:
-        return {"status_value" : True, "status_msg" : "Отлично😃! Мы вас добавили в базу 🖥!", "student_info" : list_of_students[telegram_id]}
+        return {"status_value" : True, "status_msg" : "Отлично😃! Мы вас добавили в базу 🖥!"}
 
+
+def read_code_of_group():
+    ''''''
+    with open("json_code_of_group.json", "r", encoding="utf-8") as f_read:
+        text = json.load(f_read)
+
+    return text
+
+def remove_student(telegram_id):
+    ''''''
+    data = read_data_file()
+    del data["list_of_students"][telegram_id]
+
+    with open("json_test_data.json", "w", encoding="utf-8") as f_write:
+            json.dump(data, f_write, ensure_ascii=False)
+
+    return None
+
+def remove_teacher(telegram_id):
+    ''''''
+    data = read_data_file()
+    del data["list_of_teachers"][telegram_id]
+
+    with open("json_test_data.json", "w", encoding="utf-8") as f_write:
+            json.dump(data, f_write, ensure_ascii=False)
+
+    return None
+
+def get_code_of_group(name_of_faculty):
+    code_of_group = read_code_of_group()[name_of_faculty]
+
+    return code_of_group
 
 def add_new_student(dict_of_param, telegram_id):
     '''Функция для добавления нового студента, если его нет в базе'''
     result = check_student(telegram_id)
     
-    if result["staus_value"]:
+    if result["status_value"]:
         data = read_data_file()
         data["list_of_students"][telegram_id] = dict_of_param
         with open("json_test_data.json", "w", encoding="utf-8") as f_write:
@@ -361,18 +452,19 @@ def add_new_student(dict_of_param, telegram_id):
 
 def check_teacher(telegram_id):
     '''Функция доя проверки наличия преподавателя в базе'''
-    list_of_students = read_data_file()["list_of_teachers"]
-    if telegram_id in list_of_students:
+    list_of_teachers = read_data_file()["list_of_teachers"]
+    if telegram_id in list_of_teachers:
+        teacher_info = list_of_teachers[telegram_id]
         return {"status_value" : False, "status_msg" : "Такой преподаватель уже есть🙁!", "teacher_info" : teacher_info}
     else:
-        return {"status_value" : True, "status_msg" : "Отлично😃! Мы вас добавили в базу 🖥!", "teacher_info" : teacher_info}
+        return {"status_value" : True, "status_msg" : "Отлично😃! Мы вас добавили в базу 🖥!"}
 
 
 def add_new_teacher(dict_of_param, telegram_id):
     '''Функция для добавления нового преподавателя, если его нет в базе'''
     result = check_teacher(telegram_id)
     
-    if result["staus_value"]:
+    if result["status_value"]:
         list_of_students = read_data_file()
         list_of_students["list_of_teachers"][telegram_id] = dict_of_param
         with open("json_test_data.json", "w", encoding="utf-8") as f_write:
