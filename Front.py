@@ -50,11 +50,13 @@ def handle_text(message):
 
         elif user_status == 'Староста 🤠' :
             user_markup.row('Получить расписание')
-            user_markup.row('Получить список студентов своей группы' , 'Отправить сообщение своим студентам')
+            user_markup.row('Получить список студентов своей группы')
+            user_markup.row(('Отправить сообщение своим студентам')
             json_work_new.update_last_user_command_s(user_id, message.text)
 
         elif user_status == 'Учитель 👨‍🏫👩‍🏫' :
             user_markup.row('Получить список студентов')
+            user_markup.row('Отправить сообщение студентам')
             json_work_new.update_last_user_command_t(user_id, message.text)
 
         user_markup.row('Удалить профиль')
@@ -81,6 +83,7 @@ def handle_text(message):
         json_work_new.update_last_user_command_s(user_id, message.text)
 
     elif user_status == 'Учитель 👨‍🏫👩‍🏫' :
+        user_markup.row('Получить список студентов')
         user_markup.row('Получить список студентов')
         json_work_new.update_last_user_command_t(user_id, message.text)
     user_markup.row('Удалить профиль')
@@ -145,7 +148,8 @@ def handle_text(message):
         if user_status == 'Студент 🤓':
             user_markup.row('Получить список студентов своей группы')
         else:
-            user_markup.row('Получить список студентов своей группы' , 'Отправить сообщение своим студентам')
+            user_markup.row('Получить список студентов своей группы' ) 
+            user_markup.row('Отправить сообщение своим студентам')
         user_markup.row('Удалить профиль')
         bot.send_message(message.from_user.id, 'Выберите действие:', reply_markup=user_markup)
 
