@@ -440,13 +440,18 @@ def handle_text(message):
                     json_work_new.remove_unregistered_user(user_id)
                     text = json_work_new.add_new_student(dict_of_param, user_id)
                     bot.send_message(message.from_user.id, text)
-                    bot.send_message(message.from_user.id, "Введите команду /help для получения доступных команд")
+                    user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
+                    user_markup.row("/help")
+                    bot.send_message(message.from_user.id, "Введите команду /help для получения доступных команд", reply_markup=user_markup)
                 else:
                     dict_of_param["chosen_faculty"] = ""
                     json_work_new.remove_unregistered_user(user_id)
                     text = json_work_new.add_new_teacher(dict_of_param, user_id)
                     bot.send_message(message.from_user.id, text)
-                    bot.send_message(message.from_user.id, "Введите команду /help для получения доступных команд")
+                    #bot.send_message(message.from_user.id, "Введите команду /help для получения доступных команд")
+                    user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
+                    user_markup.row("/help")
+                    bot.send_message(message.from_user.id, "Введите команду /help для получения доступных команд", reply_markup=user_markup)
 
 
 @bot.message_handler(func=lambda mess: "Удалить профиль" == mess.text, content_types=['text'])
@@ -473,7 +478,9 @@ def handler_text(message):
             json_work_new.remove_student(user_id)
 
         bot.send_message(message.from_user.id, "Ваш профиль удален")
-        bot.send_message(message.from_user.id, "Напишите /start для регистрации")
+        user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
+        user_markup.row("/start")
+        bot.send_message(message.from_user.id, "Напишите /start для регистрации", reply_markup=user_markup)
 
 
 @bot.message_handler(func=lambda mess: "Нет, я случайно (или нет) нажал эту кнопку" == mess.text, content_types=['text'])
@@ -808,22 +815,21 @@ def handle_text(message):
                     dict_of_param = json_work_new.get_info_about_unregistered_student_dict(user_id)
                 else:
                     dict_of_param = json_work_new.get_info_about_unregistered_teacher_dict(user_id)
-                    
-                if name.isalpha() == False:
+                if name.isalpha() == False or len(name) > 16:
                     user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
                     user_markup.row("Вернуться на главное меню")
                     bot.send_message(message.from_user.id, 'Введенное имя содержит недопустимые символы!', reply_markup=user_markup)
 
                     bot.send_message(message.from_user.id, "Введите имя:")
 
-                elif user_status == 'student' and name.isalpha() == True:
+                elif user_status == 'student' and name.isalpha() == True and len(name)<=15:
                     name = name.capitalize()
                     dict_of_param["student_name"] = name
                     json_work_new.add_info_about_unregistered_student(dict_of_param, user_id)
                     user_info = json_work_new.get_info_about_unregistered_student(user_id)
                     bot.send_message(message.from_user.id, "Отлично! Ваше имя успешно изменено")
                     bot.send_message(message.from_user.id, user_info)
-                else:
+                elif len(name)<=15:
                     name = name.capitalize()
                     dict_of_param["teacher_name"] = name
                     json_work_new.add_info_about_unregistered_teacher(dict_of_param, user_id)
@@ -868,14 +874,14 @@ def handle_text(message):
                 else:
                     dict_of_param = json_work_new.get_info_about_unregistered_teacher_dict(user_id)
 
-                if name.isalpha() == False:
+                if name.isalpha() == False or len(name)>15:
                     user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
                     user_markup.row("Вернуться на главное меню")
                     bot.send_message(message.from_user.id, 'Введенная фамилия содержит недопустимые символы!', reply_markup=user_markup)
 
                     bot.send_message(message.from_user.id, "Введите фамилию:")         
 
-                elif user_status == 'student' and name.isalpha() == True:
+                elif user_status == 'student' and name.isalpha() == True and len(name)<=15:
                     name = name.capitalize()
                     dict_of_param["student_family_name"] = name
                     json_work_new.add_info_about_unregistered_student(dict_of_param, user_id)
@@ -927,7 +933,7 @@ def handle_text(message):
                 user_status = json_work_new.get_user_status_un(user_id)
                 dict_of_param = json_work_new.get_info_about_unregistered_teacher_dict(user_id)
                     
-                if name.isalpha() == False:
+                if name.isalpha() == False or len(name)>15:
                     
                     user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
                     user_markup.row("Вернуться на главное меню")
@@ -935,7 +941,7 @@ def handle_text(message):
 
                     bot.send_message(message.from_user.id, "Введите отчество:")
 
-                if name.isalpha() == True:
+                if name.isalpha() == True and len(name)<=15:
                     name = name.capitalize()
                     dict_of_param["teacher_father_name"] = name
                     json_work_new.add_info_about_unregistered_teacher(dict_of_param, user_id)
