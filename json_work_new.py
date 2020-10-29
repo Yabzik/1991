@@ -1,6 +1,7 @@
 import json
 import datetime as dt
 import emoji
+import requests
 
 
 ''' 
@@ -502,18 +503,23 @@ def get_timetable(telegram_id, user_weekday=None, date=None):
         elif date:
             user_date_str = date
         '''Составления расписания в текстовом виде'''
-        tt_file = read_timetable_file(result["student_info"]["code_of_group"])
-        timetable_str = ""
 
-        #user_date_str = "25.09.2020"
+        r = requests.get(url='https://yabzik.online/unisystem/public/api/schedule', params={
+            'speciality': result["student_info"]["code_of_group"] + '-d',
+            'course': result["student_info"]["year_of_study"],
+            'date': user_date_str
+        })
+        schedule = r.json()['schedule']
+
+        timetable_str = ""
         numerals = ['I', 'II', 'III', 'IV']
-        if user_date_str in tt_file.keys():
-            for lesson in range(4):
-                name_of_lesson = tt_file[user_date_str][result["student_info"]["year_of_study"]][lesson][0]
-                audience_and_teacher = tt_file[user_date_str][result["student_info"]["year_of_study"]][lesson][1]
-                if len(name_of_lesson):
+        if schedule:
+            for lesson in schedule:
+                name_of_lesson = lesson['title']
+                audience_and_teacher = lesson['subtitle']
+                if name_of_lesson and len(name_of_lesson):
                     em = emoji.choose(' '.join([name_of_lesson, audience_and_teacher]))
-                    timetable_str += f"\n{numerals[lesson]}. {em} {name_of_lesson}\nПреподаватель и аудитория: {audience_and_teacher};"
+                    timetable_str += f"\n{numerals[lesson['index']-1]}. {em} {name_of_lesson}\nПреподаватель и аудитория: {audience_and_teacher};"
         else:
             return "На этот день для тебя не составили расписание🥺("
         if len(timetable_str):
