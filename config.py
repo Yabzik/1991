@@ -1,3 +1,3 @@
-token = "1322097005:AAGvV3aNffzGagk2u6yW-IiiK8XI4EXMxy0"
+token = "1318127890:AAHeSyyb8O7TCeDdHRcuGVdTaTR9wXcN2oA"
 
 schedule_update_seconds = 15 # интервал обновления расписания

@@ -8,30 +8,22 @@ import config
 import scheduler_parser
 
 bot = telebot.TeleBot(config.token)
-faculty = 'Филология'
-course = ''
-times = ''
-notif = ''
-curriculum = ''
-groups= ''
-result=''
-stud_list= ''
-id_list= ''
-starosta_info= ''
+
 
 @bot.message_handler(commands=['start'])
 def handle_text(message):
     user_id = str(message.from_user.id)
 
     if json_work_new.user_is_registered(user_id):
+        user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
+        user_markup.row('/help')
         bot.send_message(message.from_user.id, "С возвращением! Используйте команду /help для получения списка доступных команд.")
 
     else:
         user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
-        user_markup.row('Зарегистрироваться как студент')
-        user_markup.row('Зарегистрироваться как преподаватель')
-        bot.send_message(message.from_user.id, "Го регаться:)", reply_markup=user_markup)
-
+        user_markup.row('Зарегистрироваться как студент 🤓')
+        user_markup.row('Зарегистрироваться как преподаватель 👨‍🏫👩‍🏫')
+        bot.send_message(message.from_user.id, f"Здравствуй, {message.from_user.first_name}! 😃\nИспользуй кнопки ниже, чтобы начать процесс регистрации в нашем боте👨‍💻👩‍💻", reply_markup=user_markup)
 
 
 @bot.message_handler(commands=['help'])
@@ -51,7 +43,7 @@ def handle_text(message):
         elif user_status == 'Староста 🤠' :
             user_markup.row('Получить расписание')
             user_markup.row('Получить список студентов своей группы')
-            user_markup.row(('Отправить сообщение своим студентам')
+            user_markup.row('Отправить сообщение своим студентам')
             json_work_new.update_last_user_command_s(user_id, message.text)
 
         elif user_status == 'Учитель 👨‍🏫👩‍🏫' :
@@ -75,6 +67,7 @@ def handle_text(message):
 
     if user_status == 'Студент 🤓' :
         user_markup.row('Получить расписание')
+        user_markup.row('Получить список студентов своей группы')
         json_work_new.update_last_user_command_s(user_id, message.text)
 
     elif user_status == 'Староста 🤠' :
@@ -84,7 +77,7 @@ def handle_text(message):
 
     elif user_status == 'Учитель 👨‍🏫👩‍🏫' :
         user_markup.row('Получить список студентов')
-        user_markup.row('Получить список студентов')
+        user_markup.row('Отправить сообщение студентам')
         json_work_new.update_last_user_command_t(user_id, message.text)
     user_markup.row('Удалить профиль')
     bot.send_message(message.from_user.id, 'Выберите пункт меню:', reply_markup=user_markup)
@@ -160,7 +153,7 @@ def handle_text(message):
         bot.send_message(message.from_user.id, "Отказано в доступе")
 
 
-@bot.message_handler(func=lambda mess: 'Получить список студентов' == mess.text, content_types=['text'])
+@bot.message_handler(func=lambda mess: 'Получить список студентов' == mess.text or 'Отправить сообщение студентам' == mess.text, content_types=['text'])
 def handle_text(message):
     user_id = str(message.from_user.id)   
     user_status = json_work_new.get_user_status(user_id)
@@ -186,14 +179,18 @@ def handle_text(message):
     if json_work_new.user_is_registered(user_id): 
         user_status = json_work_new.get_user_status(user_id)
         if user_status == 'Учитель 👨‍🏫👩‍🏫':
-            json_work_new.update_last_user_command_t(user_id, message.text)
+            #json_work_new.update_last_user_command_t(user_id, message.text)
             json_work_new.update_chosen_faculty(user_id, message.text)
 
             user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
-            user_markup.row('1 курс', '2 курс')
-            user_markup.row('3 курс', '4 курс')
-            user_markup.row('5 курс', '6 курс')
-            user_markup.row('Отменить действие')
+
+            for course_num in range (1, 7, 2):
+                course = str(course_num) + ' курс'
+                course_p = str(course_num + 1) + ' курс'
+                user_markup.row(course, course_p)
+
+            user_markup.row("Отменить действие")
+            
             bot.send_message(message.from_user.id, 'Выберите курс:', reply_markup=user_markup)
 
         else:
@@ -219,10 +216,10 @@ def handle_text(message):
             user_markup.row('Изменить группу')
             if dict_of_param["student_group"] != '':
                 if json_work_new.group_has_headmen(dict_of_param["student_group"]) and dict_of_param['status'] == 'Студент 🤓':
-                    user_markup.row("Назначить себя старостой")
+                    user_markup.row("Назначить себя старостой 🤠")
 
             if dict_of_param["status"] == 'Староста 🤠':
-                        user_markup.row("Назначить себя студентом")
+                        user_markup.row("Назначить себя студентом 🤓")
 
             if json_work_new.is_valid(dict_of_param):
                     user_markup.row('Завершить регистрацию')
@@ -232,17 +229,19 @@ def handle_text(message):
     
 @bot.message_handler(func=lambda mess: '1 курс' == mess.text or '2 курс' == mess.text or '3 курс' == mess.text or '4 курс' == mess.text or '5 курс' == mess.text or '6 курс' == mess.text, content_types=['text'])
 def handle_text(message):
-    user_id = str(message.from_user.id)   
+    user_id = str(message.from_user.id)
+
     if json_work_new.user_is_registered(user_id): 
         user_status= json_work_new.get_user_status(user_id)
         year_of_study = message.text[0]
         
         if user_status == 'Учитель 👨‍🏫👩‍🏫':
-            json_work_new.update_last_user_command_t(user_id, "Получить список студентов")
+            #json_work_new.update_last_user_command_t(user_id, "Получить список студентов")
             faculty = json_work_new.get_chosen_faculty(user_id)
             json_work_new.update_chosen_faculty(user_id, "")
             list_of_groups_text, list_of_groups = json_work_new.get_list_of_group(faculty, year_of_study)
             bot.send_message(message.from_user.id, list_of_groups_text)
+            last_teacher_command = json_work_new.get_last_user_command_t(user_id)
 
             user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
 
@@ -250,26 +249,37 @@ def handle_text(message):
                 for name_of_group in list_of_groups:
                     user_markup.row(name_of_group)          
                 
-                user_markup.row('Отменить действие')    
-                bot.send_message(message.from_user.id, 'Выберите название группы, список студентов которой вы хотите получить', reply_markup=user_markup)
-                json_work_new.update_last_bot_msg_t(user_id, 'Выберите название группы, список студентов которой вы хотите получить')
+                user_markup.row('Отменить действие')
+
+                if last_teacher_command == 'Получить список студентов':
+                    bot_msg = 'Выберите название группы, список студентов которой вы хотите получить'
+                elif last_teacher_command == 'Отправить сообщение студентам':
+                    bot_msg = "Выберите название группы, сутдентам которой вы хотите отправить сообщение"
+
+                bot.send_message(message.from_user.id, bot_msg, reply_markup=user_markup)
+                json_work_new.update_last_bot_msg_t(user_id, bot_msg)
 
             else:
                 user_markup.row('Получить список студентов')
-                bot.send_message(message.from_user.id, 'Выберите пункт меню:', reply_markup=user_markup)
+                user_markup.row('Отправить сообщение студентам')
+                user_markup.row('Удалить профиль')
+                bot.send_message(message.from_user.id, 'Выберите действие', reply_markup=user_markup)
 
         else:
             json_work_new.update_last_user_command_s(user_id, "")
             bot.send_message(message.from_user.id, "Отказано в доступе")
+
     elif json_work_new.user_in_unregistered_list(user_id):
         if json_work_new.get_last_user_command_un(user_id) == "Изменить курс":   
             dict_of_param = json_work_new.get_info_about_unregistered_student_dict(user_id)
-            dict_of_param["year_of_study"] = message.text[0]
-            dict_of_param["student_group"] = ''
-            bot.send_message(message.from_user.id, "Отлично! Ваш курс успешно изменен. Если вы ранее заполняли поля группа, пожалуйста, заполните её заново")
-            json_work_new.add_info_about_unregistered_student(dict_of_param, user_id)
-            user_info = json_work_new.get_info_about_unregistered_student(user_id)
-            bot.send_message(message.from_user.id, user_info)
+            if dict_of_param["name_of_faculty"] != '':
+                dict_of_param["year_of_study"] = message.text[0]
+                dict_of_param["student_group"] = ''
+                bot.send_message(message.from_user.id, "Отлично! Ваш курс успешно изменен. Если вы ранее заполняли поля группа, пожалуйста, заполните её заново")
+                json_work_new.add_info_about_unregistered_student(dict_of_param, user_id)
+                user_info = json_work_new.get_info_about_unregistered_student(user_id)
+                bot.send_message(message.from_user.id, user_info)
+
             
             user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
             user_markup.row('Изменить имя', 'Изменить фамилию')
@@ -278,10 +288,10 @@ def handle_text(message):
 
             if dict_of_param["student_group"] != '':
                 if json_work_new.group_has_headmen(dict_of_param["student_group"]) and dict_of_param['status'] == 'Студент 🤓':
-                    user_markup.row("Назначить себя старостой")
+                    user_markup.row("Назначить себя старостой 🤠")
 
             if dict_of_param["status"] == 'Староста 🤠':
-                        user_markup.row("Назначить себя студентом")
+                        user_markup.row("Назначить себя студентом 🤓")
 
             if json_work_new.is_valid(dict_of_param):
                     user_markup.row('Завершить регистрацию')
@@ -318,24 +328,9 @@ def handle_text(message):
     else:
         json_work_new.update_last_user_command_t(user_id, "")
         bot.send_message(message.from_user.id, "Отказано в доступе")
-
-@bot.message_handler(func=lambda mess: 'Отправить сообщение студентам' == mess.text , content_types=['text'])
-def handle_text(message):
-        user_id = str(message.from_user.id)
-        user_status = json_work_new.get_user_status(user_id)
-
-        if user_status == 'Учитель 👨‍🏫👩‍🏫':
-            json_work_new.update_last_user_command_t(user_id, message.text)
-            user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
-            user_markup.row('Отменить действие')
-            bot.send_message(message.from_user.id, 'Введите сообщение:', reply_markup=user_markup)
-
-        else:
-            json_work_new.update_last_user_command_s(user_id, "")
-            bot.send_message(message.from_user.id, "Отказано в доступе")
     
 
-@bot.message_handler(func=lambda mess: "Зарегистрироваться как преподаватель" == mess.text, content_types=['text'])
+@bot.message_handler(func=lambda mess: "Зарегистрироваться как преподаватель 👨‍🏫👩‍🏫" == mess.text, content_types=['text'])
 def heandle_text(message):
     user_id = str(message.from_user.id)
 
@@ -351,9 +346,11 @@ def heandle_text(message):
             }
 
             user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
+
             user_markup.row('Изменить имя', 'Изменить фамилию')
             user_markup.row('Изменить отчество')
             user_markup.row('Отменить регистрацию')
+
             json_work_new.add_info_about_unregistered_student(dict_of_param, user_id)
             info = json_work_new.get_info_about_unregistered_teacher(user_id)
             bot.send_message(message.from_user.id, info, reply_markup=user_markup)
@@ -393,7 +390,7 @@ def handle_text(message):
         bot.send_message(message.from_user.id, "непонел")
 
 
-@bot.message_handler(func=lambda mess: "Зарегистрироваться как студент" == mess.text, content_types=['text'])
+@bot.message_handler(func=lambda mess: "Зарегистрироваться как студент 🤓" == mess.text, content_types=['text'])
 def handle_text(message):
     user_id = str(message.from_user.id)
 
@@ -456,10 +453,10 @@ def handle_text(message):
 
                         if dict_of_param["student_group"] != '':
                             if json_work_new.group_has_headmen(dict_of_param["student_group"]) and dict_of_param['status'] == 'Студент 🤓':
-                                user_markup.row("Назначить себя старостой")
+                                user_markup.row("Назначить себя старостой 🤠")
 
                         if dict_of_param["status"] == 'Староста 🤠':
-                            user_markup.row("Назначить себя студентом")
+                            user_markup.row("Назначить себя студентом 🤓")
 
                         if json_work_new.is_valid(dict_of_param):
                             user_markup.row('Завершить регистрацию')
@@ -480,7 +477,12 @@ def handle_text(message):
 
                     json_work_new.remove_unregistered_user(user_id)
                     text = json_work_new.add_new_student(dict_of_param, user_id)
+
                     bot.send_message(message.from_user.id, text)
+                    bot.send_message(message.from_user.id, "Спасибо, что начали пользоваться нашим ботом☺️\nКоманда разработчиков надееться, что у вас будет положительный опыт использования нашего бота")
+                    bot.send_message(message.from_user.id, "В знак благодарности мы даем тебе наши фирменные стикеры, которое ты можешь использовать как для коммуникации с ботом, так и для своих нужд")
+                    bot.send_sticker(message.from_user.id, "CAACAgIAAxkBAAMCX5sLPFCziNQRdIwrp9crs6n4yB4AAmwJAAKzkqlINHYOQQw5FBIbBA")
+                    
                     user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
                     user_markup.row("/help")
                     bot.send_message(message.from_user.id, "Введите команду /help для получения доступных команд", reply_markup=user_markup)
@@ -488,8 +490,12 @@ def handle_text(message):
                     dict_of_param["chosen_faculty"] = ""
                     json_work_new.remove_unregistered_user(user_id)
                     text = json_work_new.add_new_teacher(dict_of_param, user_id)
+
                     bot.send_message(message.from_user.id, text)
-                    #bot.send_message(message.from_user.id, "Введите команду /help для получения доступных команд")
+                    bot.send_message(message.from_user.id, "Спасибо, что начали пользоваться нашим ботом☺️\nКоманда разработчиков надееться, что у вас будет положительный опыт использования нашего бота")
+                    bot.send_message(message.from_user.id, "В знак благодарности мы даем тебе наши фирменные стикеры, которое ты можешь использовать как для коммуникации с ботом, так и для своих нужд")
+                    bot.send_sticker(message.from_user.id, "CAACAgIAAxkBAAMCX5sLPFCziNQRdIwrp9crs6n4yB4AAmwJAAKzkqlINHYOQQw5FBIbBA")
+                    
                     user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
                     user_markup.row("/help")
                     bot.send_message(message.from_user.id, "Введите команду /help для получения доступных команд", reply_markup=user_markup)
@@ -502,7 +508,7 @@ def handler_text(message):
     if json_work_new.user_is_registered(user_id):
         user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
         user_markup.row("Да, я хочу удалить свой профиль")
-        user_markup.row("Нет, я случайно (или нет) нажал эту кнопку")
+        user_markup.row("Нет, я просто так нажал эту кнопку🙃")
         bot.send_message(message.from_user.id, "Вы точно хотите удалить свой профиль?", reply_markup=user_markup)
 
 
@@ -518,21 +524,23 @@ def handler_text(message):
         else:
             json_work_new.remove_student(user_id)
 
-        bot.send_message(message.from_user.id, "Ваш профиль удален")
+        bot.send_message(message.from_user.id, "Ваш профиль удален😥")
         user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
         user_markup.row("/start")
         bot.send_message(message.from_user.id, "Напишите /start для регистрации", reply_markup=user_markup)
 
 
-@bot.message_handler(func=lambda mess: "Нет, я случайно (или нет) нажал эту кнопку" == mess.text, content_types=['text'])
+@bot.message_handler(func=lambda mess: "Нет, я просто так нажал эту кнопку🙃" == mess.text, content_types=['text'])
 def handler_text(message):
     user_id = str(message.from_user.id)
 
     if json_work_new.user_is_registered(user_id):
-        bot.send_message(message.from_user.id, "Вот и отлично) Напишите /help для получения списка доступных команд")
+        user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
+        user_markup.row("/help")
+        bot.send_message(message.from_user.id, "Вот и отлично) Напишите /help для получения списка доступных команд", reply_markup=user_markup)
 
 
-@bot.message_handler(func=lambda mess: 'Назначить себя старостой' == mess.text, content_types=['text'])
+@bot.message_handler(func=lambda mess: 'Назначить себя старостой 🤠' == mess.text, content_types=['text'])
 def handler_text(message):
     user_id = str(message.from_user.id)
 
@@ -555,10 +563,10 @@ def handler_text(message):
 
                 if dict_of_param["student_group"] != '':
                     if json_work_new.group_has_headmen(dict_of_param["student_group"]) and dict_of_param['status'] == 'Студент 🤓':
-                        user_markup.row("Назначить себя старостой")
+                        user_markup.row("Назначить себя старостой 🤠")
 
                 if dict_of_param["status"] == 'Староста 🤠':
-                        user_markup.row("Назначить себя студентом")
+                        user_markup.row("Назначить себя студентом 🤓")
 
                 if json_work_new.is_valid(dict_of_param):
                     user_markup.row('Завершить регистрацию')
@@ -567,8 +575,7 @@ def handler_text(message):
                 bot.send_message(message.from_user.id, user_info, reply_markup=user_markup)
 
 
-
-@bot.message_handler(func=lambda mess: 'Назначить себя студентом' == mess.text, content_types=['text'])
+@bot.message_handler(func=lambda mess: 'Назначить себя студентом 🤓' == mess.text, content_types=['text'])
 def handler_text(message):
     user_id = str(message.from_user.id)
 
@@ -591,10 +598,10 @@ def handler_text(message):
 
                 if dict_of_param["student_group"] != '':
                     if json_work_new.group_has_headmen(dict_of_param["student_group"]) and dict_of_param['status'] == 'Студент 🤓':
-                        user_markup.row("Назначить себя старостой")
+                        user_markup.row("Назначить себя старостой 🤠")
 
                 if dict_of_param["status"] == 'Староста 🤠':
-                        user_markup.row("Назначить себя студентом")
+                        user_markup.row("Назначить себя студентом 🤓")
 
                 if json_work_new.is_valid(dict_of_param):
                     user_markup.row('Завершить регистрацию')
@@ -622,10 +629,10 @@ def handle_text(message):
 
                 if dict_of_param["student_group"] != '':
                     if json_work_new.group_has_headmen(dict_of_param["student_group"]) and dict_of_param['status'] == 'Студент 🤓':
-                        user_markup.row("Назначить себя старостой")
+                        user_markup.row("Назначить себя старостой 🤠")
 
                 if dict_of_param["status"] == 'Староста 🤠':
-                        user_markup.row("Назначить себя студентом")
+                        user_markup.row("Назначить себя студентом 🤓")
 
                 if json_work_new.is_valid(dict_of_param):
                     user_markup.row('Завершить регистрацию')
@@ -650,6 +657,7 @@ def handle_text(message):
     else:
         '''Обнуление последней команды и сообщения бота в зависимости от статуса'''
         bot.send_message(user_id, "не понел")
+
         
 @bot.message_handler(func=lambda mess: 'Изменить имя' == mess.text, content_types=['text'])
 def handle_text(message):
@@ -688,7 +696,10 @@ def handle_text(message):
 
         else:
             bot.send_message(message.from_user.id, 'Вы ещё не начинали процесс регистрации')
-            #го регаться
+            user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
+            user_markup.row('Зарегистрироваться как студент 🤓')
+            user_markup.row('Зарегистрироваться как преподаватель 👨‍🏫👩‍🏫')
+            bot.send_message(message.from_user.id, "Давай попробуем зарегистрироваться☺️", reply_markup=user_markup)
 
     else:
         #обнуление команд
@@ -698,6 +709,7 @@ def handle_text(message):
 @bot.message_handler(func=lambda mess: "Изменить факультет" == mess.text, content_types=['text'])
 def handle_text(message):
     user_id = str(message.from_user.id)
+
     if json_work_new.user_in_unregistered_list(user_id):
         json_work_new.update_last_user_command_un(user_id, message.text)
         
@@ -716,26 +728,20 @@ def handle_text(message):
 @bot.message_handler(func=lambda mess: 'Изменить курс'== mess.text, content_types=['text'])
 def handle_text(message):
     user_id = str(message.from_user.id)
+
     if json_work_new.user_in_unregistered_list(user_id):
-        #dict_of_param = json_work_new.get_info_about_unregistered_student(user_id)
+        
         json_work_new.update_last_user_command_un(user_id, message.text)
         user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
-        for course_num in range (1, 6):
+
+        for course_num in range (1, 7, 2):
             course = str(course_num) + ' курс'
-            user_markup.row(course)
+            course_p = str(course_num + 1) + ' курс'
+            user_markup.row(course, course_p)
+
         user_markup.row("Вернуться на главное меню")
         bot.send_message(message.from_user.id, 'Выберите курс:', reply_markup=user_markup)
-        '''if dict_of_param["student_name"] != '' and dict_of_param["student_family_name"] != '' and dict_of_param["name_of_faculty"] != '':
-            dict_of_param["year_of_study"] = message.text
-            json_work_new.add_info_about_unregistered_student(dict_of_param, user_id)
-            groups = json_work_new.get_full_group_list()
-            user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
-            for group in groups:
-                user_markup.row(group)
-            user_markup.row('Изменить курс')
-            bot.send_message(message.from_user.id, 'Выберите группу:', reply_markup=user_markup)
-        else:
-            bot.send_message(message.from_user.id, 'Ошибка')'''
+        
     elif json_work_new.user_is_registered(telegram_id):
         bot.send_message(message.from_user.id, 'Вы уже зарегистрированы')     
         
@@ -754,7 +760,7 @@ def handle_text(message):
             user_markup.row("Вернуться на главное меню")
             bot.send_message(message.from_user.id, 'Выберите группу:', reply_markup=user_markup)
         else:
-            bot.send_message(message.from_user.id, "Выберите для начала группу и факультет")
+            bot.send_message(message.from_user.id, "Сначала заполните поля факультета и курса!😡")
 
             user_info = json_work_new.get_info_about_unregistered_student(user_id)
             dict_of_param = json_work_new.get_info_about_unregistered_student_dict(user_id)
@@ -766,10 +772,10 @@ def handle_text(message):
             user_markup.row('Изменить группу')
             if dict_of_param["student_group"] != '':
                 if json_work_new.group_has_headmen(dict_of_param["student_group"]) and dict_of_param['status'] == 'Студент 🤓':
-                    user_markup.row("Назначить себя старостой")
+                    user_markup.row("Назначить себя старостой 🤠")
 
             if dict_of_param["status"] == 'Староста 🤠':
-                        user_markup.row("Назначить себя студентом")
+                        user_markup.row("Назначить себя студентом 🤓")
 
             if json_work_new.is_valid(dict_of_param):
                 user_markup.row('Завершить регистрацию')
@@ -778,23 +784,7 @@ def handle_text(message):
             bot.send_message(message.from_user.id, user_info, reply_markup=user_markup)
     elif json_work_new.user_is_registered(telegram_id):
         bot.send_message(message.from_user.id, 'Вы уже зарегистрированы')          
-    
-    
-'''@bot.message_handler(func=lambda mess: 'Зарегистрироваться'== mess.text or 'Изменить статус'== mess.text, content_types=['text'])
-def handle_text(message):
-    user_id = str(message.from_user.id)
-    if json_work_new.user_in_unregistered_list(user_id):
-        dict_of_param = json_work_new.get_info_about_unregistered_student(user_id)
-        if dict_of_param["student_name"] != '' and dict_of_param["student_family_name"] != '' and dict_of_param["name_of_faculty"] != '' and dict_of_param["year_of_study"] != '' and dict_of_param["student_group"] != '' and dict_of_param["status"] == 'студент':
-            if message.text == 'Изменить статус' :
-                bot.send_message(message.from_user.id, 'Введите токен для получения статуса')    #Тут нужно запомнить сообщение бота но я не знаю будет ли работать функция update_last_bot_msg_s с незареганым студентом !!!!!!!!!!!!!!!
-            else:
-                status=json_work_new.add_new_student(dict_of_param, user_id)
-                bot.send_message(message.from_user.id, status)
-        else: 
-            bot.send_message(message.from_user.id, 'Ошибка')
-    elif json_work_new.user_is_registered(telegram_id):
-        bot.send_message(message.from_user.id, 'Вы уже истрированы') .'''    
+     
         
 @bot.message_handler(func=lambda mess: 'Отменить регистрацию' == mess.text, content_types=['text'])
 def handle_text(message):
@@ -803,19 +793,19 @@ def handle_text(message):
     if not json_work_new.user_is_registered(user_id):
         if json_work_new.user_in_unregistered_list(user_id):
             json_work_new.remove_unregistered_user(user_id)
-            bot.send_message(message.from_user.id, "Регистрация отменена!")
+            bot.send_message(message.from_user.id, "Регистрация отменена😥")
 
             user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
-            user_markup.row('Зарегистрироваться как студент')
-            user_markup.row('Зарегистрироваться как преподаватель')
-            bot.send_message(message.from_user.id, "Го регаться:)", reply_markup=user_markup)
+            user_markup.row('Зарегистрироваться как студент 🤓')
+            user_markup.row('Зарегистрироваться как преподаватель 👨‍🏫👩‍🏫')
+            bot.send_message(message.from_user.id, "Давай опять попробуем зарегистрироваться☺️", reply_markup=user_markup)
         else:
             bot.send_message(message.from_user.id, "Да вы вроде и не регались...")
 
             user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
-            user_markup.row('Зарегистрироваться как студент')
-            user_markup.row('Зарегистрироваться как преподаватель')
-            bot.send_message(message.from_user.id, "Го регаться:)", reply_markup=user_markup)
+            user_markup.row('Зарегистрироваться как студент 🤓')
+            user_markup.row('Зарегистрироваться как преподаватель 👨‍🏫👩‍🏫')
+            bot.send_message(message.from_user.id, "Давай попробуем зарегистрироваться☺️", reply_markup=user_markup)
 
     else:
         '''Обнуление последних команд'''
@@ -835,6 +825,10 @@ def handle_text(message):
 
         elif user_status == 'Староста 🤠':
             user_command = json_work_new.get_last_user_command_s(user_id)
+
+        elif user_status == 'Студент 🤓':
+            bot.send_message(message.from_user.id, "Вы что-то не то ввели(")
+            return
     
         if user_command =='Получить список студентов' and user_status == 'Учитель 👨‍🏫👩‍🏫' and bot_command == 'Выберите название группы, список студентов которой вы хотите получить':
             student_group = message.text
@@ -842,35 +836,63 @@ def handle_text(message):
 
             bot.send_message(message.from_user.id, group_list) 
             json_work_new.update_chosen_faculty(user_id, student_group)
+            json_work_new.update_last_user_command_t(user_id, "")
             json_work_new.update_last_bot_msg_t(user_id, "")
             
             user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
             user_markup.row('Получить список студентов')
+            user_markup.row('Отправить сообщение студентам')
 
-            if group_list != f"Пока нет зарегистрированных студентов в нашей системе из группы {student_group} 😐":
-                user_markup.row('Отправить сообщение студентам')
-
-            else:
-                json_work_new.update_chosen_faculty(user_id, "")
+            
+            json_work_new.update_chosen_faculty(user_id, "")
 
             user_markup.row('Удалить профиль')
             bot.send_message(message.from_user.id, 'Выберите действие:', reply_markup=user_markup)
 
-        elif user_status == 'Учитель 👨‍🏫👩‍🏫' and user_command == 'Отправить сообщение студентам':
-            group = json_work_new.get_chosen_faculty(user_id)
-            group_list_id = json_work_new.get_group_list_id(group)
+        elif user_status == 'Учитель 👨‍🏫👩‍🏫' and user_command == 'Отправить сообщение студентам' and bot_command == 'Выберите название группы, сутдентам которой вы хотите отправить сообщение':
+            student_group = message.text
+            json_work_new.update_chosen_faculty(user_id, student_group)
+            group_list_id = json_work_new.get_group_list_id(student_group)
+
+            if len(group_list_id):
+                json_work_new.update_last_bot_msg_t(user_id, "Введите сообщение:")
+                user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
+                user_markup.row('Отменить действие')
+                bot.send_message(message.from_user.id, 'Введите сообщение:', reply_markup=user_markup)
+                
+
+
+            else:
+                bot.send_message(message.from_user.id, f"Пока нет зарегистрированных студентов в нашей системе из группы {student_group} 😐")
+
+                user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
+                user_markup.row('Получить список студентов')
+                user_markup.row('Отправить сообщение студентам')
+                user_markup.row('Удалить профиль')
+                bot.send_message(message.from_user.id, 'Выберите пункт меню:', reply_markup=user_markup)
+                json_work_new.update_last_user_command_t(user_id, "")
+                json_work_new.update_last_bot_msg_t(user_id, "")
+                json_work_new.update_chosen_faculty(user_id, "")
+
+        elif user_status == 'Учитель 👨‍🏫👩‍🏫' and user_command == 'Отправить сообщение студентам' and bot_command == 'Введите сообщение:':
+            teacher_msg = message.text
+
+            student_group = json_work_new.get_chosen_faculty(user_id)
+            group_list_id = json_work_new.get_group_list_id(student_group)
 
             for student_id in group_list_id:
                 teacher_initials = json_work_new.get_teacher_name_and_father_name(str(message.from_user.id))
-                teacher_initials ='Преподаватель ' + teacher_initials + ' отправил сообщение студентам вашей группы:\n' + message.text
-                bot.send_message(student_id, teacher_initials)
+                teachers_msg ='Преподаватель ' + teacher_initials + ' отправил сообщение студентам вашей группы:\n' + message.text
+                bot.send_message(student_id, teachers_msg)
 
-            bot.send_message(message.from_user.id, f"Ваше сообщение успешно доставлено студентам группы {group}!")
-
+            bot.send_message(message.from_user.id, f"Ваше сообщение успешно доставлено студентам группы {student_group}!")
             user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
             user_markup.row('Получить список студентов')
+            user_markup.row('Отправить сообщение студентам')
             user_markup.row('Удалить профиль')
             bot.send_message(message.from_user.id, 'Выберите пункт меню:', reply_markup=user_markup)
+            json_work_new.update_last_user_command_t(user_id, "")
+            json_work_new.update_last_bot_msg_t(user_id, "")
 
         elif user_status == 'Староста 🤠' and user_command == 'Отправить сообщение своим студентам':
             headman_group = json_work_new.get_student_group(user_id)
@@ -935,10 +957,10 @@ def handle_text(message):
                     user_markup.row('Изменить группу')
                     if dict_of_param["student_group"] != '':
                         if json_work_new.group_has_headmen(dict_of_param["student_group"]) and dict_of_param['status'] == 'Студент 🤓':
-                            user_markup.row("Назначить себя старостой")
+                            user_markup.row("Назначить себя старостой 🤠")
 
                     if dict_of_param["status"] == 'Староста 🤠':
-                        user_markup.row("Назначить себя студентом")
+                        user_markup.row("Назначить себя студентом 🤓")
 
                     if json_work_new.is_valid(dict_of_param):
                         user_markup.row('Завершить регистрацию')
@@ -999,10 +1021,10 @@ def handle_text(message):
 
                     if dict_of_param["student_group"] != '':
                         if json_work_new.group_has_headmen(dict_of_param["student_group"]) and dict_of_param['status'] == 'Студент 🤓':
-                            user_markup.row("Назначить себя старостой")
+                            user_markup.row("Назначить себя старостой 🤠")
 
                     if dict_of_param["status"] == 'Староста 🤠':
-                        user_markup.row("Назначить себя студентом")
+                        user_markup.row("Назначить себя студентом 🤓")
 
                     if json_work_new.is_valid(dict_of_param):
                         user_markup.row('Завершить регистрацию')
@@ -1064,38 +1086,39 @@ def handle_text(message):
                         dict_of_param["student_group"] = message.text
                         json_work_new.add_info_about_unregistered_student(dict_of_param, user_id)
                         bot.send_message(message.from_user.id, "Отлично! Ваша группа успешно изменена")
-                    user_info = json_work_new.get_info_about_unregistered_student(user_id)
-                    bot.send_message(message.from_user.id, user_info)
-                                            
-                    
-                    user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
-                    user_markup.row('Изменить имя', 'Изменить фамилию')
-                    user_markup.row('Изменить факультет', 'Изменить курс')
-                    user_markup.row('Изменить группу')
-                    if dict_of_param["student_group"] != '':
-                        if json_work_new.group_has_headmen(dict_of_param["student_group"])  and dict_of_param['status'] == 'Студент 🤓':
-                            user_markup.row("Назначить себя старостой")
-
-                    if dict_of_param["status"] == 'Староста 🤠':
-                        user_markup.row("Назначить себя студентом")
-
-                    if json_work_new.is_valid(dict_of_param):
-                        user_markup.row('Завершить регистрацию')
-                    user_markup.row('Отменить регистрацию')
-                    bot.send_message(message.from_user.id, "Выберите пункт меню", reply_markup=user_markup)
                 else:
-                    bot.send_message(message.from_user.id, "Сначала заполните поля факультета и курса")
+                    bot.send_message(message.from_user.id, "Сначала заполните поля факультета и курса!😡")
+                    
+                user_info = json_work_new.get_info_about_unregistered_student(user_id)
+                bot.send_message(message.from_user.id, user_info)
+                                        
+                user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
+                user_markup.row('Изменить имя', 'Изменить фамилию')
+                user_markup.row('Изменить факультет', 'Изменить курс')
+                user_markup.row('Изменить группу')
+                if dict_of_param["student_group"] != '':
+                    if json_work_new.group_has_headmen(dict_of_param["student_group"])  and dict_of_param['status'] == 'Студент 🤓':
+                        user_markup.row("Назначить себя старостой 🤠")
+
+                if dict_of_param["status"] == 'Староста 🤠':
+                    user_markup.row("Назначить себя студентом 🤓")
+
+                if json_work_new.is_valid(dict_of_param):
+                    user_markup.row('Завершить регистрацию')
+                user_markup.row('Отменить регистрацию')
+                bot.send_message(message.from_user.id, "Выберите пункт меню", reply_markup=user_markup)
             else:
                 bot.send_message(user_id, "Не понял(")
                 '''Обнуление последней команды и последнего сообщения бота'''
 
         else:
             user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
-            user_markup.row('Зарегистрироваться как студент')
-            user_markup.row('Зарегистрироваться как преподаватель')
+            user_markup.row('Зарегистрироваться как студент 🤓')
+            user_markup.row('Зарегистрироваться как преподаватель 👨‍🏫👩‍🏫')
             bot.send_message(message.from_user.id, "Я не понял что ты написал\nТак что го регаться:)", reply_markup=user_markup)
 
-     
+'''@bot.message_handler(content_types=['stiker'])
+def handler_sticker(message)'''
 
 def notify(faculty_code, year_of_study, date):
     students = {}
@@ -1112,5 +1135,6 @@ def notify(faculty_code, year_of_study, date):
 
 scheduler_parser.notify_callback = notify
 
-bot.polling()
-input()
+
+if __name__ == '__main__':
+    bot.polling()
