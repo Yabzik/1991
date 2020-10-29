@@ -552,7 +552,7 @@ def handle_text(message):
 
             else:
                 user_info = json_work_new.get_info_about_unregistered_teacher(user_id)
-                dict_of_param = json_work_new.get_info_about_uregistered_teacher_dict(user_id)
+                dict_of_param = json_work_new.get_info_about_unregistered_teacher_dict(user_id)
 
                 user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
 
