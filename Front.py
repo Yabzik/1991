@@ -45,11 +45,12 @@ def handle_text(message):
 
         if user_status == 'Студент 🤓' :
             user_markup.row('Получить расписание')
+            user_markup.row('Получить список студентов своей группы')
             json_work_new.update_last_user_command_s(user_id, message.text)
 
         elif user_status == 'Староста 🤠' :
             user_markup.row('Получить расписание')
-            user_markup.row('Получить список своих студентов' , 'Отправить сообщение своим студентам')
+            user_markup.row('Получить список студентов своей группы' , 'Отправить сообщение своим студентам')
             json_work_new.update_last_user_command_s(user_id, message.text)
 
         elif user_status == 'Учитель 👨‍🏫👩‍🏫' :
@@ -76,7 +77,7 @@ def handle_text(message):
 
     elif user_status == 'Староста 🤠' :
         user_markup.row('Получить расписание')
-        user_markup.row('Получить список своих студентов' , 'Отправить сообщение своим студентам')
+        user_markup.row('Получить список студентов своей группы' , 'Отправить сообщение своим студентам')
         json_work_new.update_last_user_command_s(user_id, message.text)
 
     elif user_status == 'Учитель 👨‍🏫👩‍🏫' :
@@ -129,27 +130,27 @@ def handle_text(message):
         bot.send_message(message.from_user.id, 'Отказано в доступе')
 
 
-@bot.message_handler(func=lambda mess: 'Получить список своих студентов' == mess.text, content_types=['text'])
+@bot.message_handler(func=lambda mess: 'Получить список студентов своей группы' == mess.text, content_types=['text'])
 def handle_text(message):
     user_id = str(message.from_user.id)   
     user_status = json_work_new.get_user_status(user_id)
 
-    if user_status == 'Староста 🤠':
-        headman_group = json_work_new.get_student_group(user_id)
-        group_list = json_work_new.get_group_list(headman_group)
+    if user_status == 'Староста 🤠' or user_status == 'Студент 🤓':
+        student_group = json_work_new.get_student_group(user_id)
+        group_list = json_work_new.get_group_list(student_group)
         bot.send_message(message.from_user.id, group_list)
 
         user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
         user_markup.row('Получить расписание')
-        user_markup.row('Получить список своих студентов' , 'Отправить сообщение своим студентам')
+        if user_status == 'Студент 🤓':
+            user_markup.row('Получить список студентов своей группы')
+        else:
+            user_markup.row('Получить список студентов своей группы' , 'Отправить сообщение своим студентам')
         user_markup.row('Удалить профиль')
         bot.send_message(message.from_user.id, 'Выберите действие:', reply_markup=user_markup)
 
     else:
-        if user_status == 'Студент 🤓':
-                json_work_new.update_last_user_command_s(user_id, "")
-
-        elif user_status == 'Учитель 👨‍🏫👩‍🏫':
+        if user_status == 'Учитель 👨‍🏫👩‍🏫':
             json_work_new.update_last_user_command_t(user_id, "")
 
         bot.send_message(message.from_user.id, "Отказано в доступе")
@@ -301,10 +302,11 @@ def handle_text(message):
         
         if user_status == 'Студент 🤓':
             user_markup.row('Получить расписание')
+            user_markup.row('Получить список студентов своей группы')
 
         else:
             user_markup.row('Получить расписание')
-            user_markup.row('Получить список своих студентов' , 'Отправить сообщение своим студентам')
+            user_markup.row('Получить список студентов своей группы' , 'Отправить сообщение своим студентам')
 
         user_markup.row('Удалить профиль')
         bot.send_message(message.from_user.id, 'Выберите пункт меню:', reply_markup=user_markup)
@@ -877,7 +879,7 @@ def handle_text(message):
 
             user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
             user_markup.row('Получить расписание')
-            user_markup.row('Получить список своих студентов' , 'Отправить сообщение своим студентам')
+            user_markup.row('Получить список студентов своей группы' , 'Отправить сообщение своим студентам')
             user_markup.row('Удалить профиль')
             bot.send_message(message.from_user.id, 'Выберите действие:', reply_markup=user_markup)
 
