@@ -194,7 +194,7 @@ def get_list_of_faculties():
 def get_info_about_student(telegram_id):
     '''Функция для получения информации о студенте'''
     list_of_students = read_data_file()["list_of_students"]
-    los = list_of_students["telegram_id"]
+    los = list_of_students[telegram_id]
     
     info = f'''\tИнформация о студенте:
     Имя: {los["sudent_name"]}
@@ -485,6 +485,44 @@ def user_is_registered(telegram_id):
     data = read_data_file()
 
     return telegram_id in data["list_of_students"] or telegram_id in data["list_of_teachers"]
+
+
+def get_last_user_id_s(telegram_id):
+    student_info = read_data_file()["list_of_students"][telegram_id]
+
+    return student_info['last_id']
+
+
+def update_last_user_id_s(telegram_id, user_id):
+    data = read_data_file()
+    data["list_of_students"][telegram_id]["last_id"] = user_id
+
+    with open("json_test_data.json", "w", encoding="utf-8") as f_write:
+        json.dump(data, f_write, ensure_ascii=False)
+
+    return None
+
+
+def get_info_about_student_dict(telegram_id):
+    student_info = read_data_file()["list_of_students"][telegram_id]
+
+    return student_info
+
+
+def get_last_user_id_t(telegram_id):
+    teacher_info = read_data_file()["list_of_teachers"][telegram_id]
+
+    return teacher_info['last_id']
+
+
+def update_last_user_id_t(telegram_id, user_id):
+    data = read_data_file()
+    data["list_of_teachers"][telegram_id]["last_id"] = user_id
+
+    with open("json_test_data.json", "w", encoding="utf-8") as f_write:
+        json.dump(data, f_write, ensure_ascii=False)
+
+    return None
 
 
 def get_timetable(telegram_id, user_weekday=None, date=None):

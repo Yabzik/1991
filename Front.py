@@ -470,10 +470,9 @@ def handle_text(message):
                 del dict_of_param["user_status"]
                 dict_of_param["last_user_command"] = ''
                 dict_of_param["last_bot_msg"] = ''
+                dict_of_param["last_id"] = ['', '', '']
                 if user_status == "student":
                     dict_of_param["code_of_group"] = json_work_new.get_code_of_group(dict_of_param["name_of_faculty"])
-                    dict_of_param["last_user_command"] = ""
-                    dict_of_param["last_bot_msg"] = ""
 
                     json_work_new.remove_unregistered_user(user_id)
                     text = json_work_new.add_new_student(dict_of_param, user_id)
@@ -823,12 +822,8 @@ def handle_text(message):
             user_command = json_work_new.get_last_user_command_t(user_id)
             bot_command = json_work_new.get_last_bot_msg_t(user_id)
 
-        elif user_status == 'Староста 🤠':
+        else:
             user_command = json_work_new.get_last_user_command_s(user_id)
-
-        elif user_status == 'Студент 🤓':
-            bot.send_message(message.from_user.id, "Вы что-то не то ввели(")
-            return
     
         if user_command =='Получить список студентов' and user_status == 'Учитель 👨‍🏫👩‍🏫' and bot_command == 'Выберите название группы, список студентов которой вы хотите получить':
             student_group = message.text
@@ -883,7 +878,10 @@ def handle_text(message):
             for student_id in group_list_id:
                 teacher_initials = json_work_new.get_teacher_name_and_father_name(str(message.from_user.id))
                 teachers_msg ='Преподаватель ' + teacher_initials + ' отправил сообщение студентам вашей группы:\n' + message.text
-                bot.send_message(student_id, teachers_msg)
+                keyboard = telebot.types.InlineKeyboardMarkup()
+                callback_button = telebot.types.InlineKeyboardButton(text="Ответить на сообщение", callback_data=user_id + ' ' + str(message.message_id))
+                keyboard.add(callback_button)
+                bot.send_message(student_id, teachers_msg, reply_markup=keyboard)
 
             bot.send_message(message.from_user.id, f"Ваше сообщение успешно доставлено студентам группы {student_group}!")
             user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
@@ -894,6 +892,58 @@ def handle_text(message):
             json_work_new.update_last_user_command_t(user_id, "")
             json_work_new.update_last_bot_msg_t(user_id, "")
 
+        elif user_status != 'Учитель 👨‍🏫👩‍🏫' and user_command == "Ответить на сообщение":
+            student_msg = message.text
+
+            student_info = json_work_new.get_info_about_student_dict(user_id)
+            teacher_id_info = json_work_new.get_last_user_id_s(user_id)
+            text = f"Студент группы {student_info['student_group']}, {student_info['student_family_name']} {student_info['student_name']} ответил на ваше сообщение:\n" + student_msg
+            
+            keyboard = telebot.types.InlineKeyboardMarkup()
+            back_data = user_id
+            callback_button = telebot.types.InlineKeyboardButton(text="Ответить на сообщение", callback_data=user_id + ' ' + str(message.message_id))
+            keyboard.add(callback_button)
+            bot.send_message(int(teacher_id_info[0]), text, reply_markup=keyboard, reply_to_message_id=int(teacher_id_info[3]))
+            bot.send_message(message.from_user.id, "Ваше сообщение успешно доставлено преподавателю!")
+            bot.edit_message_text(chat_id=message.from_user.id, message_id=int(teacher_id_info[1]), text=teacher_id_info[2])
+
+            user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
+            user_markup.row('Получить расписание')
+            user_markup.row('Получить список студентов своей группы')
+            user_markup.row('Удалить профиль')
+            bot.send_message(message.from_user.id, 'Выберите действие:', reply_markup=user_markup)
+            json_work_new.update_last_user_command_s(user_id, "")
+            json_work_new.update_last_bot_msg_s(user_id, "")
+            json_work_new.update_last_user_id_s(user_id, [])
+
+
+        elif user_status == 'Учитель 👨‍🏫👩‍🏫' and user_command == "Ответить на сообщение":
+            
+
+            teacher_initials = json_work_new.get_teacher_name_and_father_name(str(message.from_user.id))
+            teacher_msg = 'Преподаватель ' + teacher_initials + ' ответил на ваше сообщение:\n' + message.text
+            student_id_info = json_work_new.get_last_user_id_t(user_id)
+            
+            keyboard = telebot.types.InlineKeyboardMarkup()
+            back_data = user_id
+            callback_button = telebot.types.InlineKeyboardButton(text="Ответить на сообщение", callback_data=user_id + ' ' + str(message.message_id))
+            keyboard.add(callback_button)
+            bot.send_message(int(student_id_info[0]), teacher_msg, reply_markup=keyboard, reply_to_message_id=int(student_id_info[3]))
+            bot.send_message(message.from_user.id, "Ваше сообщение успешно доставлено преподавателю!")
+            bot.edit_message_text(chat_id=message.from_user.id, message_id=int(student_id_info[1]), text=student_id_info[2])
+
+            user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
+            user_markup.row('Получить список студентов')
+            user_markup.row('Отправить сообщение студентам')
+            user_markup.row('Удалить профиль')
+
+            bot.send_message(message.from_user.id, 'Выберите действие:', reply_markup=user_markup)
+            json_work_new.update_last_user_command_t(user_id, "")
+            json_work_new.update_last_bot_msg_t(user_id, "")
+            json_work_new.update_last_user_id_t(user_id, [])
+
+
+
         elif user_status == 'Староста 🤠' and user_command == 'Отправить сообщение своим студентам':
             headman_group = json_work_new.get_student_group(user_id)
             group_list_id = json_work_new.get_group_list_id_for_headmen(headman_group)
@@ -901,6 +951,8 @@ def handle_text(message):
 
             for student_id in group_list_id:
                 bot.send_message(student_id, headman_text_for_students)
+                '''keyboard = telebot.types.InlineKeyboardMarkup()
+                callback_button = telebot.types.InlineKeyboardButton(text="", callback_data="test")'''
             bot.send_message(message.from_user.id, "Ваше сообщение успешно доставлено студентам вашей группы!")
 
             user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
@@ -1119,6 +1171,25 @@ def handle_text(message):
 
 '''@bot.message_handler(content_types=['stiker'])
 def handler_sticker(message)'''
+
+@bot.callback_query_handler(func=lambda call: True)
+def callback_inline(call):
+    user_id = str(call.from_user.id)
+
+    if call.message:
+        if json_work_new.get_user_status(user_id) != 'Учитель 👨‍🏫👩‍🏫':
+            json_work_new.update_last_user_command_s(user_id, "Ответить на сообщение")
+            user_and_message_id = call.data.split()
+            json_work_new.update_last_user_id_s(user_id, [user_and_message_id[0], call.message.message_id, call.message.text, user_and_message_id[1]])
+        else:
+            json_work_new.update_last_user_command_t(user_id, "Ответить на сообщение")
+            user_and_message_id = call.data.split()
+            json_work_new.update_last_user_id_t(user_id, [user_and_message_id[0], call.message.message_id, call.message.text, user_and_message_id[1]])
+        user_markup = telebot.types.ReplyKeyboardMarkup(True, False)
+        user_markup.row("Отменить действие")
+        bot.send_message(call.from_user.id, "Введите сообщение:", reply_markup=user_markup)
+        return
+
 
 def notify(faculty_code, year_of_study, date):
     students = {}
