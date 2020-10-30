@@ -1279,7 +1279,11 @@ def callback_inline(call):
         else:
             bot.edit_message_text(chat_id=call.from_user.id, message_id=call.message.message_id, text=call.message.text)
 
-
+@bot.message_handler(func=lambda mess:  "CAACAgIAAxkBAAMoX5xojUxJPp4CRoNdwzSri3jP1M0AAiwCAAIh7bsD0QLdh-0eCW0bBA"== mess.text, content_types=['text'])
+    keyboard = types.InlineKeyboardMarkup()
+    url_button = types.InlineKeyboardButton(text="Перейти на Яндекс", url="http://mathprofi.ru/")
+    keyboard.add(url_button)
+    bot.send_message(message.chat.id, "Как быстро матешу подтянуть? Да, математика нелегкий предмет, но не переживай, ты ее поймешь! Вот тут можно быстро понять любую тему:", reply_markup=keyboard)
 
 def notify(faculty_code, year_of_study, date):
     students = {}
