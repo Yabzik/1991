@@ -525,6 +525,38 @@ def update_last_user_id_t(telegram_id, user_id):
     return None
 
 
+def update_teacher_msg(telegram_id, msg):
+    data = read_data_file()
+    data["list_of_teachers"][telegram_id]["teacher_msg"] = msg
+
+    with open("json_test_data.json", "w", encoding="utf-8") as f_write:
+        json.dump(data, f_write, ensure_ascii=False)
+
+    return None
+
+
+def get_teacher_msg(telegram_id):
+    teacher_info = read_data_file()["list_of_teachers"][telegram_id]
+
+    return teacher_info['teacher_msg']
+
+
+def update_student_msg(telegram_id, msg):
+    data = read_data_file()
+    data["list_of_students"][telegram_id]["teacher_msg"] = msg
+
+    with open("json_test_data.json", "w", encoding="utf-8") as f_write:
+        json.dump(data, f_write, ensure_ascii=False)
+
+    return None
+
+
+def get_student_msg(telegram_id):
+    teacher_info = read_data_file()["list_of_students"][telegram_id]
+
+    return teacher_info['student_msg']
+
+
 def get_timetable(telegram_id, user_weekday=None, date=None):
     '''Фукнция для получения расписания студента в определенный день'''
     result = check_student(telegram_id)
