@@ -61,6 +61,30 @@ class Parser:
         with open(path, 'w', encoding='utf-8') as file:
             file.write(json.dumps(self.result, indent=4, ensure_ascii=False))
 
+def change_hook():
+    r = requests.get(url='https://yabzik.online/unisystem/public/api/updates')
+    updates = r.json()['updates']
+
+    to_acquire = []
+
+    if updates:
+        for speciality, dates in updates.items():
+            for date, courses in dates.items():
+                for course, events in courses.items():
+                    empty = True
+                    for event_data in events:
+                        to_acquire.append(event_data['id'])
+                        if event_data['title'] or event_data['subtitle']:
+                            empty = False
+                    if not empty and notify_callback:
+                        notify_callback(speciality.split('-')[0], course, date)
+            rq = requests.post(url='https://yabzik.online/unisystem/public/api/acquire', params={
+                'ids': json.dumps(to_acquire)
+            })
+            if rq.status_code == 200:
+                to_acquire = []
+
+
 def on_change(file):
     # вызывается при изменении файла расписания
     faculty_code = file.split('/')[-1].split('.')[0]
@@ -115,5 +139,6 @@ notify_callback = None
 
 from apscheduler.schedulers.background import BackgroundScheduler
 scheduler = BackgroundScheduler()
-scheduler.add_job(poll, 'interval', seconds=config.schedule_update_seconds)
+# scheduler.add_job(poll, 'interval', seconds=config.schedule_update_seconds)
+scheduler.add_job(change_hook, 'interval', seconds=config.schedule_update_seconds)
 scheduler.start()
