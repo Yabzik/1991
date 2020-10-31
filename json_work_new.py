@@ -543,7 +543,7 @@ def get_teacher_msg(telegram_id):
 
 def update_student_msg(telegram_id, msg):
     data = read_data_file()
-    data["list_of_students"][telegram_id]["teacher_msg"] = msg
+    data["list_of_students"][telegram_id]["student_msg"] = msg
 
     with open("json_test_data.json", "w", encoding="utf-8") as f_write:
         json.dump(data, f_write, ensure_ascii=False)
@@ -555,6 +555,14 @@ def get_student_msg(telegram_id):
     teacher_info = read_data_file()["list_of_students"][telegram_id]
 
     return teacher_info['student_msg']
+
+
+def user_is_headmen(telegram_id):
+    student_info = read_data_file()["list_of_students"][telegram_id]
+    if student_info["status"] == 'Староста 🤠':
+        return True
+    else:
+        return False
 
 
 def get_timetable(telegram_id, user_weekday=None, date=None):
@@ -610,6 +618,38 @@ def find_students(query):
     return result
 
 
+def get_answer_t(telegram_id):
+    teacher_info = read_data_file()["list_of_teachers"][telegram_id]
+
+    return teacher_info["answer"]
+
+
+def update_answer_t(telegram_id, answer):
+    data = read_data_file()
+    data["list_of_teachers"][telegram_id]["answer"] = answer
+
+    with open("json_test_data.json", "w", encoding="utf-8") as f_write:
+        json.dump(data, f_write, ensure_ascii=False)
+
+    return None
+
+
+def get_answer_s(telegram_id):
+    teacher_info = read_data_file()["list_of_students"][telegram_id]
+
+    return teacher_info["answer"]
+
+
+def update_answer_s(telegram_id, answer):
+    data = read_data_file()
+    data["list_of_students"][telegram_id]["answer"] = answer
+
+    with open("json_test_data.json", "w", encoding="utf-8") as f_write:
+        json.dump(data, f_write, ensure_ascii=False)
+
+    return None
+
+
 def get_full_group_list():
     '''Функция для получения списка всех групп'''
     data_of_group = read_group_data()
@@ -623,8 +663,3 @@ def get_full_group_list():
 '''def write():
     with open("json_work_file.json", "w", encoding="utf-8") as f_write:
         pass'''
-
-
-if __name__ == "__main__": 
-
-   read_group_data()
